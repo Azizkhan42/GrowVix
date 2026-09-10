@@ -8,8 +8,8 @@ const FB_AUTH = 'https://www.facebook.com/v19.0/dialog/oauth';
 const LI_AUTH = 'https://www.linkedin.com/oauth/v2/authorization';
 const LI_TOKEN = 'https://www.linkedin.com/oauth/v2/accessToken';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://growvix-production.up.railway.app/';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://frontend-web-growvix.vercel.app/login';
 
 function getRedirectUri(platform) {
   return `${BACKEND_URL}/api/social/callback/${platform}`;
