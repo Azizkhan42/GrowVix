@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-500: #aa3bff;
+  --color-primary-600: #8c2ce6;
+  --color-dark-bg: #0b0e14;
+  --color-dark-card: rgba(255, 255, 255, 0.03);
+  --color-dark-border: rgba(255, 255, 255, 0.08);
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-gray-200 antialiased;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-dark-card border border-dark-border backdrop-blur-md rounded-xl;
+  }
+}
