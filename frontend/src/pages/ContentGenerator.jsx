@@ -155,18 +155,18 @@ export default function ContentGenerator() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
             AI Content Generator <Sparkles className="text-yellow-400" />
           </h1>
           <p className="text-gray-400">Generate platform-optimized content with AI-powered engagement scoring.</p>
         </div>
-        <div className="flex gap-3">
-          <button onClick={handleGenerateIdeas} disabled={loadingIdeas} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button onClick={handleGenerateIdeas} disabled={loadingIdeas} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm justify-center">
             {loadingIdeas ? <Loader2 size={14} className="animate-spin" /> : <Lightbulb size={14} className="text-yellow-400" />} Content Ideas
           </button>
-          <button onClick={() => navigate('/content-calendar')} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm">
+          <button onClick={() => navigate('/content-calendar')} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm justify-center">
             <Calendar size={14} /> Calendar
           </button>
         </div>
@@ -180,7 +180,7 @@ export default function ContentGenerator() {
               <label className="block text-sm text-gray-400 mb-1">Topic / Subject *</label>
               <input type="text" required placeholder="e.g. Benefits of AI in marketing" value={formData.topic} onChange={(e) => setFormData({...formData, topic: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Platform</label>
                 <select value={formData.platform} onChange={(e) => setFormData({...formData, platform: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500">
@@ -201,7 +201,7 @@ export default function ContentGenerator() {
                 </select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Target Audience</label>
                 <input type="text" placeholder="e.g. Small business owners" value={formData.audience} onChange={(e) => setFormData({...formData, audience: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500" />
@@ -233,10 +233,10 @@ export default function ContentGenerator() {
         <div className="glass-card p-6">
           {generatedContent ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h2 className="text-lg font-semibold text-white">Generated Content</h2>
                 {variations.length > 1 && (
-                  <div className="flex gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {variations.map((v, i) => (
                       <button key={i} onClick={() => setActiveVariation(i)} className={`text-xs px-3 py-1 rounded-full transition-colors ${activeVariation === i ? 'bg-primary-500 text-white' : 'bg-white/5 text-gray-400 hover:text-white'}`}>
                         {v.label || `V${i + 1}`}

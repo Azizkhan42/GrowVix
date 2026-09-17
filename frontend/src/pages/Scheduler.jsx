@@ -62,18 +62,29 @@ export default function Scheduler() {
     );
   }
 
+  const renderInfo = (post) => {
+    const date = new Date(post.scheduledTime);
+    return (
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        {post.status === 'published' ? <><CheckCircle2 size={14} className="text-green-500" /><span className="text-green-400 font-medium">Published</span></> : post.status === 'failed' ? <><X size={14} className="text-red-500" /><span className="text-red-400 font-medium">Failed</span></> : <><Clock size={14} className="text-yellow-500" /><span className="text-yellow-400 font-medium">Pending</span></>}
+        {post.attempts > 0 && post.status !== 'published' && <span className="text-xs text-gray-500">(attempt {post.attempts}/{post.maxAttempts})</span>}
+        <span className="text-xs text-gray-500">{date.toLocaleDateString()} at {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
             Social Scheduler <CalendarDays className="text-green-400" />
           </h1>
           <p className="text-gray-400">Plan and automate your social media content.</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2"
+          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 justify-center sm:w-auto w-full"
         >
           <Plus size={18} /> New Post
         </button>
@@ -82,7 +93,7 @@ export default function Scheduler() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#12151c] border border-white/10 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl">
+          <div className="bg-[#12151c] border border-white/10 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
             <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
               <X size={20} />
             </button>
@@ -144,9 +155,9 @@ export default function Scheduler() {
         </div>
       )}
 
-      {/* Posts Table */}
+      {/* Posts */}
       {posts.length === 0 ? (
-        <div className="glass-card p-16 text-center relative z-10 flex flex-col items-center">
+        <div className="glass-card p-8 md:p-16 text-center relative z-10 flex flex-col items-center">
           <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 text-gray-500">
             <CalendarDays size={28} />
           </div>
@@ -154,53 +165,88 @@ export default function Scheduler() {
           <p className="text-gray-400 max-w-sm">Click "New Post" to schedule your first social media post.</p>
         </div>
       ) : (
-        <div className="glass-card relative z-10 overflow-hidden">
-          <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/5 bg-white/5 text-xs font-medium text-gray-400 uppercase tracking-wider">
-            <div className="col-span-5">Content</div>
-            <div className="col-span-2">Platform</div>
-            <div className="col-span-3">Scheduled For</div>
-            <div className="col-span-2">Actions</div>
+        <>
+          {/* Desktop table */}
+          <div className="glass-card relative z-10 overflow-hidden hidden md:block">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/5 bg-white/5 text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <div className="col-span-5">Content</div>
+              <div className="col-span-2">Platform</div>
+              <div className="col-span-3">Scheduled For</div>
+              <div className="col-span-2">Actions</div>
+            </div>
+            <div className="divide-y divide-white/5">
+              {posts.map(post => {
+                const pf = platformColors[post.platform] || platformColors.linkedin;
+                return (
+                  <div key={post._id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors group">
+                    <div className="col-span-5 flex gap-3">
+                      {post.imageUrl && (
+                        <div className="w-12 h-12 rounded-lg bg-white/5 overflow-hidden shrink-0 border border-white/10 mt-1">
+                          <img src={post.imageUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <p className="text-gray-200 text-sm line-clamp-2">{post.content}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-md capitalize ${pf.bg} ${pf.text}`}>
+                        {pf.label}
+                      </span>
+                    </div>
+                    <div className="col-span-3">
+                      <div className="flex items-center gap-1.5 text-sm mb-0.5">
+                        {post.status === 'published' ? <><CheckCircle2 size={14} className="text-green-500" /><span className="text-green-400 font-medium">Published</span></> : post.status === 'failed' ? <><X size={14} className="text-red-500" /><span className="text-red-400 font-medium">Failed</span></> : <><Clock size={14} className="text-yellow-500" /><span className="text-yellow-400 font-medium">Pending</span></>}
+                        {post.attempts > 0 && post.status !== 'published' && <span className="text-xs text-gray-500">(attempt {post.attempts}/{post.maxAttempts})</span>}
+                      </div>
+                      <span className="text-xs text-gray-500">{`${new Date(post.scheduledTime).toLocaleDateString()} at ${new Date(post.scheduledTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</span>
+                      {post.status === 'failed' && post.lastError && <p className="text-xs text-red-400/70 mt-0.5 line-clamp-1" title={post.lastError}>{post.lastError}</p>}
+                    </div>
+                    <div className="col-span-2">
+                      <button
+                        onClick={() => handleDelete(post._id)}
+                        className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div className="divide-y divide-white/5">
+
+          {/* Mobile cards */}
+          <div className="space-y-4 md:hidden relative z-10">
             {posts.map(post => {
-              const date = new Date(post.scheduledTime);
               const pf = platformColors[post.platform] || platformColors.linkedin;
               return (
-                <div key={post._id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors group">
-                  <div className="col-span-5 flex gap-3">
-                    {post.imageUrl && (
-                      <div className="w-12 h-12 rounded-lg bg-white/5 overflow-hidden shrink-0 border border-white/10 mt-1">
-                        <img src={post.imageUrl} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                    <p className="text-gray-200 text-sm line-clamp-2">{post.content}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-md capitalize ${pf.bg} ${pf.text}`}>
-                      {pf.label}
-                    </span>
-                  </div>
-                  <div className="col-span-3">
-                    <div className="flex items-center gap-1.5 text-sm mb-0.5">
-                      {post.status === 'published' ? <><CheckCircle2 size={14} className="text-green-500" /><span className="text-green-400 font-medium">Published</span></> : post.status === 'failed' ? <><X size={14} className="text-red-500" /><span className="text-red-400 font-medium">Failed</span></> : <><Clock size={14} className="text-yellow-500" /><span className="text-yellow-400 font-medium">Pending</span></>}
-                      {post.attempts > 0 && post.status !== 'published' && <span className="text-xs text-gray-500">(attempt {post.attempts}/{post.maxAttempts})</span>}
+                <div key={post._id} className="glass-card p-4">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {post.imageUrl && (
+                        <div className="w-10 h-10 rounded-lg bg-white/5 overflow-hidden shrink-0 border border-white/10">
+                          <img src={post.imageUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <span className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-md capitalize ${pf.bg} ${pf.text}`}>
+                        {pf.label}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-500">{date.toLocaleDateString()} at {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {post.status === 'failed' && post.lastError && <p className="text-xs text-red-400/70 mt-0.5 line-clamp-1" title={post.lastError}>{post.lastError}</p>}
-                  </div>
-                  <div className="col-span-2">
                     <button
                       onClick={() => handleDelete(post._id)}
-                      className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg"
+                      className="text-gray-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                      aria-label="Delete post"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
+                  <p className="text-gray-200 text-sm mb-3">{post.content}</p>
+                  {renderInfo(post)}
+                  {post.status === 'failed' && post.lastError && <p className="text-xs text-red-400/70 mt-1 text-wrap" title={post.lastError}>{post.lastError}</p>}
                 </div>
               );
             })}
           </div>
-        </div>
+        </>
       )}
     </div>
   );

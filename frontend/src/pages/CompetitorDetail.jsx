@@ -88,32 +88,32 @@ export default function CompetitorDetail() {
         <ArrowLeft size={18} /> Back to Competitors
       </button>
 
-      <div className="glass-card p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+      <div className="glass-card p-5 sm:p-6">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl sm:text-2xl shadow-lg shrink-0">
               {(competitor.name || 'C').charAt(0).toUpperCase()}
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">{competitor.name || competitor.username}</h1>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-white break-words">{competitor.name || competitor.username}</h1>
               <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400">
                 {competitor.industry && <span className="flex items-center gap-1"><Briefcase size={14} />{competitor.industry}</span>}
                 {competitor.location && <span className="flex items-center gap-1"><MapPin size={14} />{competitor.location}</span>}
                 {competitor.website && <a href={competitor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-purple-400 hover:text-purple-300"><Globe size={14} />Website</a>}
               </div>
               <div className="flex flex-wrap gap-2 mt-3">
-                {competitor.instagramProfile && <span className="text-xs px-3 py-1 rounded-full bg-pink-500/15 text-pink-400">Instagram: {competitor.instagramProfile}</span>}
-                {competitor.linkedinPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-500/15 text-blue-400">LinkedIn: {competitor.linkedinPage}</span>}
-                {competitor.facebookPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-600/15 text-blue-300">Facebook: {competitor.facebookPage}</span>}
-                {competitor.twitterHandle && <span className="text-xs px-3 py-1 rounded-full bg-sky-500/15 text-sky-400">Twitter: {competitor.twitterHandle}</span>}
+                {competitor.instagramProfile && <span className="text-xs px-3 py-1 rounded-full bg-pink-500/15 text-pink-400">Instagram</span>}
+                {competitor.linkedinPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-500/15 text-blue-400">LinkedIn</span>}
+                {competitor.facebookPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-600/15 text-blue-300">Facebook</span>}
+                {competitor.twitterHandle && <span className="text-xs px-3 py-1 rounded-full bg-sky-500/15 text-sky-400">Twitter</span>}
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button onClick={fetchRealData} disabled={fetching} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50">
+          <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+            <button onClick={fetchRealData} disabled={fetching} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center">
               {fetching ? <><Loader2 size={16} className="animate-spin" />Fetching...</> : <><Download size={16} />Fetch Real Data</>}
             </button>
-            <button onClick={runAnalysis} disabled={analyzing} className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50">
+            <button onClick={runAnalysis} disabled={analyzing} className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center">
               {analyzing ? <><Loader2 size={16} className="animate-spin" />Analyzing...</> : <><BarChart2 size={16} />Run AI Analysis</>}
             </button>
           </div>
@@ -239,7 +239,7 @@ export default function CompetitorDetail() {
             {posts.map(post => (
               <div key={post._id} className="border border-dark-border rounded-xl p-4 bg-dark-bg/50">
                 <p className="text-gray-200 text-sm mb-3">{(post.caption || '').substring(0, 200)}{post.caption?.length > 200 ? '...' : ''}</p>
-                <div className="flex items-center gap-4 text-xs text-gray-400">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
                   <span className="flex items-center gap-1"><Heart size={12} /> {post.likes} Likes</span>
                   <span className="flex items-center gap-1"><MessageCircle size={12} /> {post.comments} Comments</span>
                   <span className="flex items-center gap-1"><Share2 size={12} /> {post.shares} Shares</span>

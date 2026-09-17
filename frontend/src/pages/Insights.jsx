@@ -62,18 +62,18 @@ export default function Insights() {
   return (
     <div className="space-y-6 flex flex-col h-full">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
           AI Marketing Insights <Lightbulb className="text-yellow-400" />
         </h1>
         <p className="text-gray-400">Discover what's working for your competitors using AI analysis.</p>
       </div>
 
-      <div className="flex flex-1 gap-6 relative z-10 min-h-[500px]">
-        <div className="w-1/3 glass-card flex flex-col border-t-2 border-t-yellow-500 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 gap-6 relative z-10 min-h-[500px]">
+        <div className="w-full lg:w-1/3 glass-card flex flex-col border-t-2 border-t-yellow-500 overflow-hidden">
           <div className="p-4 border-b border-dark-border">
             <h3 className="font-semibold text-white">Select Competitor</h3>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto max-h-64 lg:max-h-none">
             {competitors.length === 0 ? (
               <div className="p-6 text-center">
                 <Target size={24} className="mx-auto mb-2 text-gray-600" />
@@ -100,7 +100,7 @@ export default function Insights() {
           </div>
         </div>
 
-        <div className="w-2/3 glass-card p-6 overflow-y-auto">
+        <div className="w-full lg:w-2/3 glass-card p-4 sm:p-6 overflow-y-auto">
           <h2 className="text-xl font-semibold text-white mb-6">Recent Posts & Analysis</h2>
           {loadingPosts ? (
             <div className="flex items-center justify-center py-10">

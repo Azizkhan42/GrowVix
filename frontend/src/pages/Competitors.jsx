@@ -88,16 +88,16 @@ export default function Competitors() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div className="flex items-center justify-between z-10 relative">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10 relative">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
             Competitor Intelligence <Target className="text-primary-400" />
           </h1>
           <p className="text-gray-400">Track, analyze and outperform your market rivals.</p>
         </div>
         <button
           onClick={() => { setShowAddForm(!showAddForm); setEditingId(null); setFormData(defaultForm); }}
-          className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-primary-500/20 flex items-center gap-2"
+          className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-primary-500/20 flex items-center gap-2 justify-center sm:w-auto w-full"
         >
           <Plus size={18} />
           <span>Add New Competitor</span>
@@ -195,7 +195,7 @@ export default function Competitors() {
           <p>Loading competitors...</p>
         </div>
       ) : competitors.length === 0 ? (
-        <div className="glass-card p-16 text-center relative z-10 flex flex-col items-center border-dashed border-2 border-white/5">
+        <div className="glass-card p-8 md:p-16 text-center relative z-10 flex flex-col items-center border-dashed border-2 border-white/5">
           <div className="w-20 h-20 bg-primary-500/10 rounded-full flex items-center justify-center mb-6 text-primary-400">
             <Target size={32} />
           </div>

@@ -50,19 +50,19 @@ export default function ContentCalendar() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
             Content Calendar <Calendar className="text-primary-400" />
           </h1>
           <p className="text-gray-400">AI-generated weekly content plan tailored to your business.</p>
         </div>
-        <button onClick={generateCalendar} disabled={generating} className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 disabled:opacity-50">
+        <button onClick={generateCalendar} disabled={generating} className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 justify-center disabled:opacity-50 sm:w-auto w-full">
           {generating ? <><Loader2 size={16} className="animate-spin" />Generating...</> : <><Sparkles size={16} />Generate Calendar</>}
         </button>
       </div>
 
-      <div className="flex items-center gap-4 relative z-10">
+      <div className="flex items-center gap-4 relative z-10 flex-wrap">
         <label className="text-sm text-gray-400">Platform:</label>
         <select value={platform} onChange={(e) => setPlatform(e.target.value)} className="bg-dark-bg border border-dark-border rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary-500 text-sm">
           <option value="multi-platform">Multi-Platform</option>
@@ -78,7 +78,7 @@ export default function ContentCalendar() {
           <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : !calendar || !calendar.entries || calendar.entries.length === 0 ? (
-        <div className="glass-card p-16 text-center relative z-10 flex flex-col items-center">
+        <div className="glass-card p-8 md:p-16 text-center relative z-10 flex flex-col items-center">
           <div className="w-20 h-20 bg-primary-500/10 rounded-full flex items-center justify-center mb-6 text-primary-400">
             <Calendar size={32} />
           </div>
@@ -92,7 +92,7 @@ export default function ContentCalendar() {
         <div className="space-y-4 relative z-10">
           {calendar.entries.map((entry, idx) => (
             <div key={idx} className={`glass-card p-5 border-l-4 ${dayColors[entry.day] || 'border-gray-500/30'}`}>
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 ${
                   entry.day === 'monday' ? 'bg-blue-500/30' :
                   entry.day === 'tuesday' ? 'bg-green-500/30' :
@@ -103,8 +103,8 @@ export default function ContentCalendar() {
                 }`}>
                   {dayIcons[entry.day] || 'D'}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="text-white font-semibold capitalize">{entry.day}</span>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-primary-500/15 text-primary-400">{entry.contentType}</span>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 capitalize">{entry.platform}</span>

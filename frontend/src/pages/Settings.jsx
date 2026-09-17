@@ -187,24 +187,24 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
           Settings <SettingsIcon className="text-gray-400" />
         </h1>
         <p className="text-gray-400">Manage your account, business profile, and platform integrations.</p>
       </div>
 
-      <div className="flex gap-6 relative z-10">
-        <div className="w-56 shrink-0 glass-card p-2 h-fit">
+      <div className="flex flex-col md:flex-row gap-6 relative z-10">
+        <div className="w-full md:w-56 shrink-0 glass-card p-2 h-fit flex md:flex-col gap-1 overflow-x-auto md:overflow-visible">
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-purple-500/15 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <Icon size={18} />{tab.label}<ChevronRight size={14} className="ml-auto opacity-50" />
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`whitespace-nowrap md:w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-purple-500/15 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <Icon size={18} />{tab.label}<ChevronRight size={14} className="hidden md:block ml-auto opacity-50" />
               </button>
             );
           })}
-          <hr className="border-white/5 my-2" />
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">
+          <hr className="border-white/5 md:my-2 md:ml-0 my-1 min-w-px" />
+          <button onClick={handleLogout} className="whitespace-nowrap md:w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">
             <LogOut size={18} />Logout
           </button>
         </div>
@@ -301,19 +301,19 @@ export default function Settings() {
                   const account = connectedAccounts[platform.id];
                   return (
                     <div key={platform.id} className={`p-4 border rounded-xl transition-colors ${isConnected ? 'border-green-500/30 bg-green-500/5' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.04]'}`}>
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-4">
                           <div className={`w-11 h-11 rounded-full ${platform.color} flex items-center justify-center text-white font-bold text-sm shrink-0`}>{platform.icon}</div>
-                          <div>
+                          <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <h3 className="text-white font-medium">{platform.name}</h3>
                               {isConnected && <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/15 px-2 py-0.5 rounded-full"><CheckCircle size={10} /> Connected</span>}
                             </div>
-                            {isConnected ? <p className="text-sm text-green-300/70 mt-0.5">Connected as <span className="font-medium text-green-300">{account.username}</span></p> : <p className="text-sm text-gray-500">{platform.desc}</p>}
+                            {isConnected ? <p className="text-sm text-green-300/70 mt-0.5 break-words">Connected as <span className="font-medium text-green-300">{account.username}</span></p> : <p className="text-sm text-gray-500">{platform.desc}</p>}
                           </div>
                         </div>
                         {isConnected ? (
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-wrap items-center gap-3 shrink-0">
                             <button onClick={() => handleDisconnect(platform.id)} className="text-red-400/70 border border-red-500/30 hover:bg-red-500/10 hover:text-red-400 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Disconnect</button>
                             {platform.id === 'facebook' && account?.availablePages?.length > 1 && (
                               <select

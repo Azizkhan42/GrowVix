@@ -67,20 +67,20 @@ export default function Recommendations() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
             Recommendations <ListChecks className="text-primary-400" />
           </h1>
           <p className="text-gray-400">AI-powered strategic recommendations to grow your digital presence.</p>
         </div>
-        <button onClick={handleRefresh} disabled={refreshing} className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50">
+        <button onClick={handleRefresh} disabled={refreshing} className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 justify-center disabled:opacity-50 sm:w-auto w-full">
           {refreshing ? <><Loader2 size={16} className="animate-spin" />Generating...</> : <><RefreshCw size={16} />Refresh</>}
         </button>
       </div>
 
       {recommendations.length === 0 ? (
-        <div className="glass-card p-16 text-center relative z-10 flex flex-col items-center">
+        <div className="glass-card p-8 md:p-16 text-center relative z-10 flex flex-col items-center">
           <div className="w-20 h-20 bg-primary-500/10 rounded-full flex items-center justify-center mb-6 text-primary-400">
             <ListChecks size={32} />
           </div>
@@ -105,7 +105,7 @@ export default function Recommendations() {
                         <div className="flex items-start gap-3">
                           <div className={`mt-0.5 ${style.text}`}><Icon size={18} /></div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
                               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${style.badge}`}>{rec.type}</span>
                               <span className="text-xs text-gray-500 capitalize">{rec.category}</span>
                               {rec.estimatedEffort && <span className="text-xs text-gray-500">Effort: {rec.estimatedEffort}</span>}

@@ -10,7 +10,7 @@
 
 @layer base {
   body {
-    @apply bg-dark-bg text-gray-200 antialiased;
+    @apply bg-dark-bg text-gray-200 antialiased overflow-x-hidden;
   }
 }
 

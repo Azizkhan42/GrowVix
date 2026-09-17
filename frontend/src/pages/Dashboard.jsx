@@ -84,14 +84,14 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Dashboard</h1>
           <p className="text-gray-400">Welcome back, {user?.name?.split(' ')[0] || 'User'}. Here's your digital intelligence overview.</p>
         </div>
         <button
           onClick={() => navigate('/competitors')}
-          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2"
+          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 justify-center sm:w-auto w-full"
         >
           <Plus size={18} /> Add Competitor
         </button>
