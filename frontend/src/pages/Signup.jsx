@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import Logo from "../components/Logo";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -44,9 +45,7 @@ export default function Signup() {
       {/* Logo + Heading */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="flex justify-center flex-col items-center">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center font-bold text-white text-2xl mb-4 shadow-[0_0_20px_rgba(170,59,255,0.4)]">
-            G
-          </div>
+          <Logo size={56} className="mb-5" />
 
           <h2 className="text-3xl font-extrabold text-white text-center">
             Create your account

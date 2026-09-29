@@ -13,6 +13,7 @@ import {
   ListChecks,
   X
 } from 'lucide-react';
+import Logo from './Logo';
 
 export default function Sidebar({ open, onClose }) {
   const location = useLocation();
@@ -48,8 +49,7 @@ export default function Sidebar({ open, onClose }) {
       >
         <div className="h-16 flex items-center px-6 border-b border-dark-border">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <div className="w-8 h-8 rounded bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center font-bold text-white text-lg shrink-0">G</div>
-            <span className="text-xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-gray-400 truncate">GrowVix</span>
+            <Logo size={32} />
           </div>
           <button onClick={onClose} className="md:hidden p-1.5 text-gray-400 hover:text-white rounded-lg transition-colors" aria-label="Close menu">
             <X size={20} />
