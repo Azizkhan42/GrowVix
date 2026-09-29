@@ -66,14 +66,14 @@ export default function CompetitorDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (!competitor) {
     return (
-      <div className="text-center py-20 text-gray-400">
+      <div className="text-center py-20 text-slate-500">
         <p>Competitor not found.</p>
         <button onClick={() => navigate('/competitors')} className="text-purple-400 mt-4 hover:text-purple-300">Back to Competitors</button>
       </div>
@@ -84,22 +84,22 @@ export default function CompetitorDetail() {
 
   return (
     <div className="space-y-6">
-      <button onClick={() => navigate('/competitors')} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+      <button onClick={() => navigate('/competitors')} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors">
         <ArrowLeft size={18} /> Back to Competitors
       </button>
 
       <div className="glass-card p-5 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
           <div className="flex items-center gap-4 min-w-0">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl sm:text-2xl shadow-lg shrink-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center text-slate-900 font-bold text-xl sm:text-2xl shadow-lg shrink-0">
               {(competitor.name || 'C').charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-white break-words">{competitor.name || competitor.username}</h1>
-              <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 break-words">{competitor.name || competitor.username}</h1>
+              <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-500">
                 {competitor.industry && <span className="flex items-center gap-1"><Briefcase size={14} />{competitor.industry}</span>}
                 {competitor.location && <span className="flex items-center gap-1"><MapPin size={14} />{competitor.location}</span>}
-                {competitor.website && <a href={competitor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-purple-400 hover:text-purple-300"><Globe size={14} />Website</a>}
+                {competitor.website && <a href={competitor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-violet-600 hover:text-violet-800"><Globe size={14} />Website</a>}
               </div>
               <div className="flex flex-wrap gap-2 mt-3">
                 {competitor.instagramProfile && <span className="text-xs px-3 py-1 rounded-full bg-pink-500/15 text-pink-400">Instagram</span>}
@@ -110,16 +110,16 @@ export default function CompetitorDetail() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 shrink-0">
-            <button onClick={fetchRealData} disabled={fetching} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center">
+            <button onClick={fetchRealData} disabled={fetching} className="bg-white border border-app-border hover:bg-slate-50 text-slate-900 px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center">
               {fetching ? <><Loader2 size={16} className="animate-spin" />Fetching...</> : <><Download size={16} />Fetch Real Data</>}
             </button>
-            <button onClick={runAnalysis} disabled={analyzing} className="bg-primary-600 hover:bg-primary-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center">
+            <button onClick={runAnalysis} disabled={analyzing} className="gradient-brand text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center hover:opacity-95">
               {analyzing ? <><Loader2 size={16} className="animate-spin" />Analyzing...</> : <><BarChart2 size={16} />Run AI Analysis</>}
             </button>
           </div>
         </div>
         {fetchMsg && (
-          <div className={`mt-4 text-sm p-3 rounded-lg border ${fetchMsg.includes('Imported') ? 'bg-green-500/10 border-green-500/40 text-green-400' : 'bg-yellow-500/10 border-yellow-500/40 text-yellow-300'}`}>
+          <div className={`mt-4 text-sm p-3 rounded-lg border ${fetchMsg.includes('Imported') ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
             {fetchMsg}
           </div>
         )}
@@ -128,63 +128,63 @@ export default function CompetitorDetail() {
       {competitor.profileData?.followers > 0 && (
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Instagram size={18} className="text-pink-400" /> Instagram Profile</h2>
+            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2"><Instagram size={18} className="text-pink-600" /> Instagram Profile</h2>
             {competitor.profileData.isVerified && <span className="text-xs flex items-center gap-1 text-blue-400"><CheckCircle2 size={12} /> Verified</span>}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-xl font-bold text-white">{(competitor.profileData.followers || 0).toLocaleString()}</p>
-              <p className="text-xs text-gray-400 mt-1">Followers</p>
+              <p className="text-xl font-bold text-slate-900">{(competitor.profileData.followers || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-1">Followers</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-white">{(competitor.profileData.following || 0).toLocaleString()}</p>
-              <p className="text-xs text-gray-400 mt-1">Following</p>
+              <p className="text-xl font-bold text-slate-900">{(competitor.profileData.following || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-1">Following</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-white">{(competitor.profileData.postCount || 0).toLocaleString()}</p>
-              <p className="text-xs text-gray-400 mt-1">Posts</p>
+              <p className="text-xl font-bold text-slate-900">{(competitor.profileData.postCount || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-1">Posts</p>
             </div>
             <div>
-              <a href={competitor.profileData.profileUrl} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 text-sm">Open Profile</a>
-              {competitor.profileData.lastUpdated && <p className="text-xs text-gray-500 mt-1">Updated {new Date(competitor.profileData.lastUpdated).toLocaleDateString()}</p>}
+              <a href={competitor.profileData.profileUrl} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:text-violet-800 text-sm">Open Profile</a>
+              {competitor.profileData.lastUpdated && <p className="text-xs text-slate-400 mt-1">Updated {new Date(competitor.profileData.lastUpdated).toLocaleDateString()}</p>}
             </div>
           </div>
-          {competitor.profileData.bio && <p className="text-sm text-gray-300 mt-3 border-t border-dark-border pt-3">{competitor.profileData.bio}</p>}
+          {competitor.profileData.bio && <p className="text-sm text-slate-600 mt-3 border-t border-app-border pt-3">{competitor.profileData.bio}</p>}
         </div>
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-white">{stats.totalPosts || 0}</p>
-          <p className="text-xs text-gray-400 mt-1">Total Posts</p>
+          <p className="text-2xl font-bold text-slate-900">{stats.totalPosts || 0}</p>
+          <p className="text-xs text-slate-500 mt-1">Total Posts</p>
         </div>
         <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-white">{stats.avgEngagement || 0}%</p>
-          <p className="text-xs text-gray-400 mt-1">Avg Engagement</p>
+          <p className="text-2xl font-bold text-slate-900">{stats.avgEngagement || 0}%</p>
+          <p className="text-xs text-slate-500 mt-1">Avg Engagement</p>
         </div>
         <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-white">{(stats.totalLikes || 0).toLocaleString()}</p>
-          <p className="text-xs text-gray-400 mt-1">Total Likes</p>
+          <p className="text-2xl font-bold text-slate-900">{(stats.totalLikes || 0).toLocaleString()}</p>
+          <p className="text-xs text-slate-500 mt-1">Total Likes</p>
         </div>
         <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-white">{(stats.totalComments || 0).toLocaleString()}</p>
-          <p className="text-xs text-gray-400 mt-1">Total Comments</p>
+          <p className="text-2xl font-bold text-slate-900">{(stats.totalComments || 0).toLocaleString()}</p>
+          <p className="text-xs text-slate-500 mt-1">Total Comments</p>
         </div>
       </div>
 
       {analysis && (
         <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2"><BarChart2 size={20} className="text-purple-400" /> AI Content Analysis</h2>
-          {analysis.aiSummary && <p className="text-gray-300 text-sm mb-4 p-3 bg-white/5 rounded-lg">{analysis.aiSummary}</p>}
+          <h2 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2"><BarChart2 size={20} className="text-violet-500" /> AI Content Analysis</h2>
+          {analysis.aiSummary && <p className="text-slate-600 text-sm mb-4 p-3 bg-slate-50 border border-app-border rounded-lg">{analysis.aiSummary}</p>}
 
           {analysis.contentDistribution && Object.keys(analysis.contentDistribution).length > 0 && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-white mb-2">Content Distribution</h3>
+              <h3 className="text-sm font-medium text-slate-900 mb-2">Content Distribution</h3>
               <div className="flex gap-2 flex-wrap">
                 {Object.entries(analysis.contentDistribution).map(([key, val]) => (
                   <div key={key} className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400 capitalize">{key.replace(/_/g, ' ')}</span>
-                    <span className="text-white font-medium">{val}%</span>
+                    <span className="text-slate-500 capitalize">{key.replace(/_/g, ' ')}</span>
+                    <span className="text-slate-900 font-medium">{val}%</span>
                   </div>
                 ))}
               </div>
@@ -193,30 +193,30 @@ export default function CompetitorDetail() {
 
           {analysis.strengths?.length > 0 && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-green-400 mb-2">Strengths</h3>
+              <h3 className="text-sm font-medium text-emerald-600 mb-2">Strengths</h3>
               <ul className="space-y-1">
-                {analysis.strengths.map((s, i) => <li key={i} className="text-sm text-gray-300">- {s}</li>)}
+                {analysis.strengths.map((s, i) => <li key={i} className="text-sm text-slate-600">- {s}</li>)}
               </ul>
             </div>
           )}
 
           {analysis.weaknesses?.length > 0 && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-red-400 mb-2">Weaknesses</h3>
+              <h3 className="text-sm font-medium text-rose-600 mb-2">Weaknesses</h3>
               <ul className="space-y-1">
-                {analysis.weaknesses.map((w, i) => <li key={i} className="text-sm text-gray-300">- {w}</li>)}
+                {analysis.weaknesses.map((w, i) => <li key={i} className="text-sm text-slate-600">- {w}</li>)}
               </ul>
             </div>
           )}
 
           {analysis.topPatterns?.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-blue-400 mb-2">Top Patterns</h3>
+              <h3 className="text-sm font-medium text-blue-600 mb-2">Top Patterns</h3>
               <div className="space-y-2">
                 {analysis.topPatterns.map((p, i) => (
-                  <div key={i} className="text-sm p-2 bg-white/5 rounded-lg">
-                    <span className="text-white">{p.pattern}</span>
-                    {p.evidence && <span className="text-gray-400 ml-2">({p.evidence})</span>}
+                  <div key={i} className="text-sm p-2 bg-slate-50 border border-app-border rounded-lg">
+                    <span className="text-slate-900">{p.pattern}</span>
+                    {p.evidence && <span className="text-slate-500 ml-2">({p.evidence})</span>}
                   </div>
                 ))}
               </div>
@@ -227,25 +227,25 @@ export default function CompetitorDetail() {
 
       {competitor.notes && (
         <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-white mb-2">Notes</h2>
-          <p className="text-gray-300 text-sm">{competitor.notes}</p>
+          <h2 className="text-lg font-semibold text-slate-900 mb-2">Notes</h2>
+          <p className="text-slate-600 text-sm">{competitor.notes}</p>
         </div>
       )}
 
       {posts.length > 0 && (
         <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Analyzed Posts</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">Analyzed Posts</h2>
           <div className="space-y-4">
             {posts.map(post => (
-              <div key={post._id} className="border border-dark-border rounded-xl p-4 bg-dark-bg/50">
-                <p className="text-gray-200 text-sm mb-3">{(post.caption || '').substring(0, 200)}{post.caption?.length > 200 ? '...' : ''}</p>
-                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+              <div key={post._id} className="border border-app-border rounded-xl p-4 bg-slate-50">
+                <p className="text-slate-700 text-sm mb-3">{(post.caption || '').substring(0, 200)}{post.caption?.length > 200 ? '...' : ''}</p>
+                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
                   <span className="flex items-center gap-1"><Heart size={12} /> {post.likes} Likes</span>
                   <span className="flex items-center gap-1"><MessageCircle size={12} /> {post.comments} Comments</span>
                   <span className="flex items-center gap-1"><Share2 size={12} /> {post.shares} Shares</span>
-                  <span className="flex items-center gap-1 text-purple-400 font-medium"><TrendingUp size={12} /> {post.engagementRate}% ER</span>
-                  {post.contentType && <span className="px-2 py-0.5 rounded-full bg-white/5">{post.contentType}</span>}
-                  {post.contentCategory && <span className="px-2 py-0.5 rounded-full bg-white/5 capitalize">{post.contentCategory.replace(/_/g, ' ')}</span>}
+                  <span className="flex items-center gap-1 text-violet-600 font-medium"><TrendingUp size={12} /> {post.engagementRate}% ER</span>
+                  {post.contentType && <span className="px-2 py-0.5 rounded-md bg-white border border-app-border text-slate-600">{post.contentType}</span>}
+                  {post.contentCategory && <span className="px-2 py-0.5 rounded-md bg-white border border-app-border text-slate-600 capitalize">{post.contentCategory.replace(/_/g, ' ')}</span>}
                 </div>
               </div>
             ))}
@@ -254,7 +254,7 @@ export default function CompetitorDetail() {
       )}
 
       {posts.length === 0 && !analysis && (
-        <div className="glass-card p-12 text-center text-gray-500">
+        <div className="glass-card p-12 text-center text-slate-500">
           <p>No posts or analysis data yet for this competitor.</p>
           <p className="text-sm mt-2">Run an AI analysis to get started, or add post data manually.</p>
         </div>

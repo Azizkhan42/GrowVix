@@ -37,17 +37,17 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0e14] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-app-bg flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-200/50 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-200/50 rounded-full blur-[120px] pointer-events-none"></div>
 
       {/* Logo + Heading */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="flex justify-center flex-col items-center">
           <Logo size={56} className="mb-5" />
 
-          <h2 className="text-3xl font-extrabold text-white text-center">
+          <h2 className="text-3xl font-extrabold text-slate-900 text-center">
             Create your account
           </h2>
         </div>
@@ -55,10 +55,10 @@ export default function Signup() {
 
       {/* Form */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10">
-        <div className="backdrop-blur-xl bg-white/5 py-8 px-6 shadow-xl sm:rounded-2xl border border-white/10">
+        <div className="bg-white py-8 px-6 shadow-card sm:rounded-2xl border border-app-border">
           {/* Error Message */}
           {error && (
-            <div className="mb-4 bg-red-500/10 border border-red-500/40 text-red-400 text-sm p-3 rounded-lg">
+            <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm p-3 rounded-lg">
               {error}
             </div>
           )}
@@ -66,7 +66,7 @@ export default function Signup() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-slate-700">
                 Full Name
               </label>
 
@@ -75,13 +75,13 @@ export default function Signup() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                className="mt-1 w-full px-4 py-3 bg-white border border-app-border rounded-lg text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-slate-700">
                 Email Address
               </label>
 
@@ -90,13 +90,13 @@ export default function Signup() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                className="mt-1 w-full px-4 py-3 bg-white border border-app-border rounded-lg text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-slate-700">
                 Password
               </label>
 
@@ -105,7 +105,7 @@ export default function Signup() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                className="mt-1 w-full px-4 py-3 bg-white border border-app-border rounded-lg text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition"
               />
             </div>
 
@@ -113,18 +113,18 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg text-white font-medium bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 transition transform hover:scale-[1.02] disabled:opacity-70"
+              className="gradient-brand w-full py-3 rounded-lg text-white font-medium transition hover:opacity-95 disabled:opacity-70"
             >
               {loading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
 
           {/* Login Link */}
-          <div className="mt-6 text-center text-sm text-gray-400">
+          <div className="mt-6 text-center text-sm text-slate-500">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-purple-400 hover:text-purple-300 font-medium"
+              className="text-violet-600 hover:text-violet-800 font-medium"
             >
               Sign In
             </Link>

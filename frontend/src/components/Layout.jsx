@@ -7,16 +7,14 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-dark-bg text-gray-200 overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-app-bg text-slate-600">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 flex flex-col relative w-full min-w-0">
+
+      <div className="relative flex w-full min-w-0 flex-1 flex-col">
         <Navbar onOpenSidebar={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto overflow-x-clip p-4 sm:p-6 md:p-8 relative">
-          {/* Background glow effects */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-10 pointer-events-none"></div>
-          
-          <div className="relative z-10 max-w-7xl mx-auto">
+
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8">
             <Outlet />
           </div>
         </main>

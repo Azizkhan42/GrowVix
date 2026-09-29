@@ -187,10 +187,10 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
-          Settings <SettingsIcon className="text-gray-400" />
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1 flex items-center gap-3">
+            Settings <SettingsIcon className="text-slate-400" />
         </h1>
-        <p className="text-gray-400">Manage your account, business profile, and platform integrations.</p>
+          <p className="text-slate-500">Manage your account, business profile, and platform integrations.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 relative z-10">
@@ -198,12 +198,12 @@ export default function Settings() {
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`whitespace-nowrap md:w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-purple-500/15 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`whitespace-nowrap md:w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-violet-50 text-violet-700' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
                 <Icon size={18} />{tab.label}<ChevronRight size={14} className="hidden md:block ml-auto opacity-50" />
               </button>
             );
           })}
-          <hr className="border-white/5 md:my-2 md:ml-0 my-1 min-w-px" />
+          <hr className="border-app-border md:my-2 md:ml-0 my-1 min-w-px" />
           <button onClick={handleLogout} className="whitespace-nowrap md:w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">
             <LogOut size={18} />Logout
           </button>
@@ -212,29 +212,29 @@ export default function Settings() {
         <div className="flex-1">
           {activeTab === 'profile' && (
             <div className="glass-card p-6 space-y-6">
-              <div className="flex items-center gap-5 pb-6 border-b border-white/5">
+              <div className="flex items-center gap-5 pb-6 border-b border-app-border">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl uppercase">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-white">{user?.name || 'User'}</h2>
-                  <p className="text-gray-400 text-sm">{user?.email || 'user@example.com'}</p>
-                  <span className="inline-flex mt-2 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30 capitalize">{user?.plan || 'Free'} Plan</span>
+          <h2 className="text-xl font-semibold text-slate-900">{user?.name || 'User'}</h2>
+          <p className="text-slate-500 text-sm">{user?.email || 'user@example.com'}</p>
+                  <span className="inline-flex mt-2 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-700 border border-violet-200 capitalize">{user?.plan || 'Free'} Plan</span>
                 </div>
               </div>
               {profileError && <div className="bg-red-500/10 border border-red-500/40 text-red-400 text-sm p-3 rounded-lg">{profileError}</div>}
               {profileSuccess && <div className="bg-green-500/10 border border-green-500/40 text-green-400 text-sm p-3 rounded-lg">{profileSuccess}</div>}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Full Name</label>
-                  <input type="text" value={profileForm.name} onChange={(e) => setProfileForm({...profileForm, name: e.target.value})} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Full Name</label>
+                  <input type="text" value={profileForm.name} onChange={(e) => setProfileForm({...profileForm, name: e.target.value})} className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Email</label>
-                  <input type="email" value={profileForm.email} disabled className="w-full bg-black/20 border border-gray-700/50 rounded-lg p-3 text-gray-400 cursor-not-allowed" />
+                  <label className="block text-sm text-slate-500 mb-1">Email</label>
+                  <input type="email" value={profileForm.email} disabled className="w-full bg-slate-50 border border-app-border rounded-lg p-3 text-slate-400 cursor-not-allowed" />
                 </div>
               </div>
-              <button onClick={handleSaveProfile} disabled={savingProfile} className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 disabled:opacity-70">
+              <button onClick={handleSaveProfile} disabled={savingProfile} className="gradient-brand text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-70 hover:opacity-95">
                 {savingProfile ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : 'Save Changes'}
               </button>
             </div>
@@ -243,34 +243,34 @@ export default function Settings() {
           {activeTab === 'business' && (
             <div className="glass-card p-6 space-y-6">
               <div>
-                <h2 className="text-xl font-semibold text-white mb-1">Business Profile</h2>
-                <p className="text-gray-400 text-sm">Configure your business details for better AI-powered recommendations and content generation.</p>
+                <h2 className="text-xl font-semibold text-slate-900 mb-1">Business Profile</h2>
+                <p className="text-slate-500 text-sm">Configure your business details for better AI-powered recommendations and content generation.</p>
               </div>
               {bizSuccess && <div className="bg-green-500/10 border border-green-500/40 text-green-400 text-sm p-3 rounded-lg">{bizSuccess}</div>}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Business Name</label>
-                  <input type="text" value={bizForm.businessName} onChange={(e) => setBizForm({...bizForm, businessName: e.target.value})} placeholder="Your business name" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Business Name</label>
+                  <input type="text" value={bizForm.businessName} onChange={(e) => setBizForm({...bizForm, businessName: e.target.value})} placeholder="Your business name" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Industry</label>
-                  <input type="text" value={bizForm.industry} onChange={(e) => setBizForm({...bizForm, industry: e.target.value})} placeholder="e.g. Fashion, Technology, Food" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Industry</label>
+                  <input type="text" value={bizForm.industry} onChange={(e) => setBizForm({...bizForm, industry: e.target.value})} placeholder="e.g. Fashion, Technology, Food" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Location</label>
-                  <input type="text" value={bizForm.location} onChange={(e) => setBizForm({...bizForm, location: e.target.value})} placeholder="e.g. New York, USA" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Location</label>
+                  <input type="text" value={bizForm.location} onChange={(e) => setBizForm({...bizForm, location: e.target.value})} placeholder="e.g. New York, USA" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Website</label>
-                  <input type="url" value={bizForm.website} onChange={(e) => setBizForm({...bizForm, website: e.target.value})} placeholder="https://yourbusiness.com" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Website</label>
+                  <input type="url" value={bizForm.website} onChange={(e) => setBizForm({...bizForm, website: e.target.value})} placeholder="https://yourbusiness.com" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Target Audience</label>
-                  <input type="text" value={bizForm.targetAudience} onChange={(e) => setBizForm({...bizForm, targetAudience: e.target.value})} placeholder="e.g. Small business owners, 25-45" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Target Audience</label>
+                  <input type="text" value={bizForm.targetAudience} onChange={(e) => setBizForm({...bizForm, targetAudience: e.target.value})} placeholder="e.g. Small business owners, 25-45" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Brand Tone</label>
-                  <select value={bizForm.brandTone} onChange={(e) => setBizForm({...bizForm, brandTone: e.target.value})} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
+                  <label className="block text-sm text-slate-500 mb-1">Brand Tone</label>
+                  <select value={bizForm.brandTone} onChange={(e) => setBizForm({...bizForm, brandTone: e.target.value})} className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition">
                     <option value="professional">Professional</option>
                     <option value="casual">Casual</option>
                     <option value="funny">Funny</option>
@@ -281,10 +281,10 @@ export default function Settings() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Business Description</label>
-                <textarea rows={3} value={bizForm.description} onChange={(e) => setBizForm({...bizForm, description: e.target.value})} placeholder="Brief description of your business and what you do..." className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none" />
+                <label className="block text-sm text-slate-500 mb-1">Business Description</label>
+                <textarea rows={3} value={bizForm.description} onChange={(e) => setBizForm({...bizForm, description: e.target.value})} placeholder="Brief description of your business and what you do..." className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition resize-none" />
               </div>
-              <button onClick={handleSaveBusiness} disabled={savingBiz} className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 disabled:opacity-70">
+              <button onClick={handleSaveBusiness} disabled={savingBiz} className="gradient-brand text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-70 hover:opacity-95">
                 {savingBiz ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : 'Save Business Profile'}
               </button>
             </div>
@@ -292,24 +292,24 @@ export default function Settings() {
 
           {activeTab === 'integrations' && (
             <div className="glass-card p-6">
-              <h2 className="text-xl font-semibold text-white mb-1">Social Media Integrations</h2>
-              <p className="text-gray-400 text-sm mb-4">Connect your real social accounts to auto-post and schedule directly from GrowVix.</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-1">Social Media Integrations</h2>
+          <p className="text-slate-500 text-sm mb-4">Connect your real social accounts to auto-post and schedule directly from GrowVix.</p>
               {switchMsg && <div className="mb-4 bg-green-500/10 border border-green-500/40 text-green-400 text-sm p-3 rounded-lg">{switchMsg}</div>}
               <div className="space-y-3">
                 {socialPlatforms.map(platform => {
                   const isConnected = connectedAccounts[platform.id]?.connected;
                   const account = connectedAccounts[platform.id];
                   return (
-                    <div key={platform.id} className={`p-4 border rounded-xl transition-colors ${isConnected ? 'border-green-500/30 bg-green-500/5' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.04]'}`}>
+                    <div key={platform.id} className={`p-4 border rounded-xl transition-colors ${isConnected ? 'border-emerald-200 bg-emerald-50' : 'border-app-border bg-white hover:bg-slate-50'}`}>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-4">
                           <div className={`w-11 h-11 rounded-full ${platform.color} flex items-center justify-center text-white font-bold text-sm shrink-0`}>{platform.icon}</div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <h3 className="text-white font-medium">{platform.name}</h3>
+                              <h3 className="text-slate-900 font-medium">{platform.name}</h3>
                               {isConnected && <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/15 px-2 py-0.5 rounded-full"><CheckCircle size={10} /> Connected</span>}
                             </div>
-                            {isConnected ? <p className="text-sm text-green-300/70 mt-0.5 break-words">Connected as <span className="font-medium text-green-300">{account.username}</span></p> : <p className="text-sm text-gray-500">{platform.desc}</p>}
+                            {isConnected ? <p className="text-sm text-emerald-600/90 mt-0.5 break-words">Connected as <span className="font-medium text-emerald-700">{account.username}</span></p> : <p className="text-sm text-slate-500">{platform.desc}</p>}
                           </div>
                         </div>
                         {isConnected ? (
@@ -320,7 +320,7 @@ export default function Settings() {
                                 value={account.pageId || ''}
                                 disabled={switchingPage}
                                 onChange={(e) => handleSwitchPage(platform.id, e.target.value)}
-                                className="bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                                className="bg-white border border-app-border rounded-lg px-3 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition"
                               >
                                 <option value="">Switch Page...</option>
                                 {account.availablePages.map(page => (
@@ -333,10 +333,10 @@ export default function Settings() {
                           <button
                             onClick={() => platform.manual ? setShowConnectModal(platform.id) : handleOAuthConnect(platform.id)}
                             disabled={connecting === platform.id}
-                            className="text-purple-400 border border-purple-500/40 hover:bg-purple-500/10 px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-60"
+                            className="text-violet-700 border border-violet-200 hover:bg-violet-50 px-5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-60"
                           >
                             {connecting === platform.id ? <><Loader2 size={14} className="animate-spin" /> Connecting...</> : <>
-                              Connect {platform.auth && <span className="text-xs text-gray-500">(OAuth)</span>}
+                              Connect {platform.auth && <span className="text-xs text-slate-500">(OAuth)</span>}
                             </>}
                           </button>
                         )}
@@ -351,26 +351,26 @@ export default function Settings() {
           {activeTab === 'security' && (
             <div className="glass-card p-6 space-y-6">
               <div>
-                <h2 className="text-xl font-semibold text-white mb-2">Security Settings</h2>
-                <p className="text-gray-400 text-sm">Manage your password and account security.</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Security Settings</h2>
+          <p className="text-slate-500 text-sm">Manage your password and account security.</p>
               </div>
               {passwordError && <div className="bg-red-500/10 border border-red-500/40 text-red-400 text-sm p-3 rounded-lg">{passwordError}</div>}
               {passwordSuccess && <div className="bg-green-500/10 border border-green-500/40 text-green-400 text-sm p-3 rounded-lg">{passwordSuccess}</div>}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Current Password</label>
-                  <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} placeholder="Enter current password" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Current Password</label>
+                  <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} placeholder="Enter current password" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">New Password</label>
-                  <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} placeholder="Enter new password" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">New Password</label>
+                  <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} placeholder="Enter new password" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Confirm New Password</label>
-                  <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} placeholder="Confirm new password" className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1">Confirm New Password</label>
+                  <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} placeholder="Confirm new password" className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
               </div>
-              <button onClick={handleChangePassword} disabled={savingPassword} className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 disabled:opacity-70">
+              <button onClick={handleChangePassword} disabled={savingPassword} className="gradient-brand text-white px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-70 hover:opacity-95">
                 {savingPassword ? <><Loader2 size={14} className="animate-spin" /> Updating...</> : 'Update Password'}
               </button>
             </div>
@@ -379,11 +379,11 @@ export default function Settings() {
       </div>
 
       {showConnectModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-[#12151c] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/5">
-              <h3 className="text-white font-semibold flex items-center gap-2 capitalize">Connect {showConnectModal}</h3>
-              <button onClick={() => setShowConnectModal(null)} className="text-gray-400 hover:text-white transition-colors"><X size={20} /></button>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+          <div className="bg-white border border-app-border rounded-2xl w-full max-w-md overflow-hidden shadow-lift">
+            <div className="px-6 py-4 border-b border-app-border flex justify-between items-center bg-slate-50">
+              <h3 className="text-slate-900 font-semibold flex items-center gap-2 capitalize">Connect {showConnectModal}</h3>
+              <button onClick={() => setShowConnectModal(null)} className="text-slate-400 hover:text-slate-900 transition-colors"><X size={20} /></button>
             </div>
             <form onSubmit={handleConnectSubmit} className="p-6 space-y-4">
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex gap-3 text-xs text-blue-300 leading-relaxed">
@@ -391,21 +391,21 @@ export default function Settings() {
                 <p>Provide an access token from the {showConnectModal} developer portal. This allows GrowVix to post on your behalf.</p>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1.5 flex items-center gap-1.5"><User size={14} /> Display Name</label>
-                <input type="text" required placeholder="e.g. Your Name" value={credForm.accountName} onChange={(e) => setCredForm({...credForm, accountName: e.target.value})} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                <label className="block text-sm text-slate-500 mb-1.5 flex items-center gap-1.5"><User size={14} /> Display Name</label>
+                <input type="text" required placeholder="e.g. Your Name" value={credForm.accountName} onChange={(e) => setCredForm({...credForm, accountName: e.target.value})} className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1.5 flex items-center gap-1.5"><Key size={14} /> Access Token</label>
-                <input type="password" required placeholder="Enter your API access token" value={credForm.accessToken} onChange={(e) => setCredForm({...credForm, accessToken: e.target.value})} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                <label className="block text-sm text-slate-500 mb-1.5 flex items-center gap-1.5"><Key size={14} /> Access Token</label>
+                <input type="password" required placeholder="Enter your API access token" value={credForm.accessToken} onChange={(e) => setCredForm({...credForm, accessToken: e.target.value})} className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
               </div>
               {(showConnectModal === 'facebook' || showConnectModal === 'instagram') && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1.5 flex items-center gap-1.5"><SettingsIcon size={14} /> Page ID</label>
-                  <input type="text" required placeholder="Enter your Facebook Page ID" value={credForm.pageId} onChange={(e) => setCredForm({...credForm, pageId: e.target.value})} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none" />
+                  <label className="block text-sm text-slate-500 mb-1.5 flex items-center gap-1.5"><SettingsIcon size={14} /> Page ID</label>
+                  <input type="text" required placeholder="Enter your Facebook Page ID" value={credForm.pageId} onChange={(e) => setCredForm({...credForm, pageId: e.target.value})} className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition" />
                 </div>
               )}
               <div className="pt-2">
-                <button type="submit" disabled={connecting} className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white py-3 rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/20 flex justify-center items-center gap-2">
+                <button type="submit" disabled={connecting} className="w-full gradient-brand text-white py-3 rounded-xl font-semibold transition-all flex justify-center items-center gap-2 hover:opacity-95">
                   {connecting ? <><Loader2 size={18} className="animate-spin" /> Connecting...</> : 'Add Account'}
                 </button>
               </div>

@@ -157,16 +157,16 @@ export default function ContentGenerator() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 flex items-center gap-3">
-            AI Content Generator <Sparkles className="text-yellow-400" />
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1 flex items-center gap-3">
+            AI Content Generator <Sparkles className="text-amber-500" />
           </h1>
-          <p className="text-gray-400">Generate platform-optimized content with AI-powered engagement scoring.</p>
+          <p className="text-slate-500">Generate platform-optimized content with AI-powered engagement scoring.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <button onClick={handleGenerateIdeas} disabled={loadingIdeas} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm justify-center">
-            {loadingIdeas ? <Loader2 size={14} className="animate-spin" /> : <Lightbulb size={14} className="text-yellow-400" />} Content Ideas
+          <button onClick={handleGenerateIdeas} disabled={loadingIdeas} className="bg-white border border-app-border hover:bg-slate-50 text-slate-900 px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm justify-center">
+            {loadingIdeas ? <Loader2 size={14} className="animate-spin" /> : <Lightbulb size={14} className="text-amber-500" />} Content Ideas
           </button>
-          <button onClick={() => navigate('/content-calendar')} className="bg-white/5 border border-dark-border hover:bg-white/10 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm justify-center">
+          <button onClick={() => navigate('/content-calendar')} className="bg-white border border-app-border hover:bg-slate-50 text-slate-900 px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 text-sm justify-center">
             <Calendar size={14} /> Calendar
           </button>
         </div>
@@ -174,16 +174,16 @@ export default function ContentGenerator() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
         <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Generate Content</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Generate Content</h2>
           <form onSubmit={handleGenerate} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Topic / Subject *</label>
-              <input type="text" required placeholder="e.g. Benefits of AI in marketing" value={formData.topic} onChange={(e) => setFormData({...formData, topic: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500" />
+              <label className="block text-sm text-slate-500 mb-1">Topic / Subject *</label>
+              <input type="text" required placeholder="e.g. Benefits of AI in marketing" value={formData.topic} onChange={(e) => setFormData({...formData, topic: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-slate-900 focus:outline-none focus:border-primary-500" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Platform</label>
-                <select value={formData.platform} onChange={(e) => setFormData({...formData, platform: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500">
+                <label className="block text-sm text-slate-500 mb-1">Platform</label>
+                <select value={formData.platform} onChange={(e) => setFormData({...formData, platform: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-slate-900 focus:outline-none focus:border-primary-500">
                   <option value="linkedin">LinkedIn</option>
                   <option value="instagram">Instagram</option>
                   <option value="twitter">Twitter/X</option>
@@ -191,8 +191,8 @@ export default function ContentGenerator() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Tone</label>
-                <select value={formData.tone} onChange={(e) => setFormData({...formData, tone: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500">
+                <label className="block text-sm text-slate-500 mb-1">Tone</label>
+                <select value={formData.tone} onChange={(e) => setFormData({...formData, tone: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-slate-900 focus:outline-none focus:border-primary-500">
                   <option value="Professional">Professional</option>
                   <option value="Casual">Casual</option>
                   <option value="Funny">Funny</option>
@@ -203,12 +203,12 @@ export default function ContentGenerator() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Target Audience</label>
-                <input type="text" placeholder="e.g. Small business owners" value={formData.audience} onChange={(e) => setFormData({...formData, audience: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500" />
+                <label className="block text-sm text-slate-500 mb-1">Target Audience</label>
+                <input type="text" placeholder="e.g. Small business owners" value={formData.audience} onChange={(e) => setFormData({...formData, audience: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-slate-900 focus:outline-none focus:border-primary-500" />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Objective</label>
-                <select value={formData.objective} onChange={(e) => setFormData({...formData, objective: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-white focus:outline-none focus:border-primary-500">
+                <label className="block text-sm text-slate-500 mb-1">Objective</label>
+                <select value={formData.objective} onChange={(e) => setFormData({...formData, objective: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-slate-900 focus:outline-none focus:border-primary-500">
                   <option value="engagement">Engagement</option>
                   <option value="awareness">Awareness</option>
                   <option value="leads">Leads</option>
@@ -222,9 +222,9 @@ export default function ContentGenerator() {
             </div>
             <div className="flex items-center gap-3">
               <input type="checkbox" id="includeImage" checked={formData.includeImage} onChange={(e) => setFormData({...formData, includeImage: e.target.checked})} className="w-4 h-4 rounded bg-dark-bg border-dark-border text-primary-500 focus:ring-primary-500" />
-              <label htmlFor="includeImage" className="text-sm text-gray-400 flex items-center gap-2"><ImageIcon size={14} /> Include AI-generated image</label>
+              <label htmlFor="includeImage" className="text-sm text-slate-500 flex items-center gap-2"><ImageIcon size={14} /> Include AI-generated image</label>
             </div>
-            <button type="submit" disabled={loading} className="w-full py-3 rounded-lg text-white font-medium bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 transition disabled:opacity-70 flex items-center justify-center gap-2">
+            <button type="submit" disabled={loading} className="gradient-brand w-full py-3 rounded-lg text-white font-medium transition disabled:opacity-70 flex items-center justify-center gap-2 hover:opacity-95">
               {loading ? <><Loader2 size={16} className="animate-spin" />Generating...</> : <><Sparkles size={16} />Generate Content</>}
             </button>
           </form>
@@ -234,11 +234,11 @@ export default function ContentGenerator() {
           {generatedContent ? (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <h2 className="text-lg font-semibold text-white">Generated Content</h2>
+                <h2 className="text-lg font-semibold text-slate-900">Generated Content</h2>
                 {variations.length > 1 && (
                   <div className="flex flex-wrap gap-1">
                     {variations.map((v, i) => (
-                      <button key={i} onClick={() => setActiveVariation(i)} className={`text-xs px-3 py-1 rounded-full transition-colors ${activeVariation === i ? 'bg-primary-500 text-white' : 'bg-white/5 text-gray-400 hover:text-white'}`}>
+                      <button key={i} onClick={() => setActiveVariation(i)} className={`text-xs px-3 py-1 rounded-md transition-colors ${activeVariation === i ? 'gradient-brand text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
                         {v.label || `V${i + 1}`}
                       </button>
                     ))}
@@ -247,19 +247,19 @@ export default function ContentGenerator() {
               </div>
 
               {currentVariation && (
-                <div className="bg-dark-bg/50 rounded-xl p-4 border border-dark-border">
-                  <p className="text-gray-200 text-sm whitespace-pre-wrap">{currentVariation.caption}</p>
+                <div className="bg-slate-50 rounded-xl p-4 border border-app-border">
+                  <p className="text-slate-700 text-sm whitespace-pre-wrap">{currentVariation.caption}</p>
                   {currentVariation.hashtags?.length > 0 && (
-                    <p className="text-primary-400 text-sm mt-3">{currentVariation.hashtags.join(' ')}</p>
+                    <p className="text-violet-500 text-sm mt-3">{currentVariation.hashtags.join(' ')}</p>
                   )}
                 </div>
               )}
 
               {score && (
-                <div className="bg-dark-bg/50 rounded-xl p-4 border border-dark-border">
+                <div className="bg-slate-50 rounded-xl p-4 border border-app-border">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-white flex items-center gap-2"><BarChart2 size={14} className="text-purple-400" />AI Estimated Engagement Potential</h3>
-                    <span className={`text-lg font-bold ${score.overall >= 70 ? 'text-green-400' : score.overall >= 40 ? 'text-yellow-400' : 'text-red-400'}`}>{score.overall}/100</span>
+                    <h3 className="text-sm font-medium text-slate-900 flex items-center gap-2"><BarChart2 size={14} className="text-violet-500" />AI Estimated Engagement Potential</h3>
+                    <span className={`text-lg font-bold ${score.overall >= 70 ? 'text-emerald-600' : score.overall >= 40 ? 'text-amber-600' : 'text-rose-600'}`}>{score.overall}/100</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     {[
@@ -271,12 +271,12 @@ export default function ContentGenerator() {
                       { label: 'Relevance', value: score.audienceRelevance }
                     ].map(item => (
                       <div key={item.label} className="text-center">
-                        <div className="text-xs text-gray-400 mb-1">{item.label}</div>
-                        <div className="text-sm font-semibold text-white">{item.value}</div>
+                        <div className="text-xs text-slate-500 mb-1">{item.label}</div>
+                        <div className="text-sm font-semibold text-slate-900">{item.value}</div>
                       </div>
                     ))}
                   </div>
-                  {score.explanation && <p className="text-xs text-gray-400 italic">{score.explanation}</p>}
+                  {score.explanation && <p className="text-xs text-slate-500 italic">{score.explanation}</p>}
                 </div>
               )}
 
@@ -287,20 +287,20 @@ export default function ContentGenerator() {
               )}
 
               {publishMsg && (
-                <div className={`text-sm p-3 rounded-lg border ${publishMsg.startsWith('Published') || publishMsg.startsWith('Scheduled') ? 'bg-green-500/10 border-green-500/40 text-green-400' : 'bg-red-500/10 border-red-500/40 text-red-400'}`}>
+                <div className={`text-sm p-3 rounded-lg border ${publishMsg.startsWith('Published') || publishMsg.startsWith('Scheduled') ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700'}`}>
                   {publishMsg}
                 </div>
               )}
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => handleCopy(currentVariation?.caption || generatedContent.caption, currentVariation?.hashtags || generatedContent.hashtags)} className="flex-1 py-2.5 rounded-lg bg-white/5 border border-dark-border hover:bg-white/10 text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors">
-                  {copied ? <><Check size={14} className="text-green-400" />Copied!</> : <><Copy size={14} />Copy to Clipboard</>}
+                <button onClick={() => handleCopy(currentVariation?.caption || generatedContent.caption, currentVariation?.hashtags || generatedContent.hashtags)} className="flex-1 py-2.5 rounded-lg bg-white border border-app-border hover:bg-slate-50 text-slate-900 text-sm font-medium flex items-center justify-center gap-2 transition-colors">
+                  {copied ? <><Check size={14} className="text-emerald-600" />Copied!</> : <><Copy size={14} />Copy to Clipboard</>}
                 </button>
                 <div className="flex flex-1 gap-3">
                   <button
                     onClick={handlePublishNow}
                     disabled={publishing}
-                    className="flex-1 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white text-sm font-medium flex items-center justify-center gap-2 transition disabled:opacity-70"
+                    className="gradient-brand flex-1 py-2.5 rounded-lg text-white text-sm font-medium flex items-center justify-center gap-2 transition disabled:opacity-70 hover:opacity-95"
                     title={isConnected(formData.platform) ? `Publish now to ${formData.platform}` : 'Connect this platform in Settings first'}
                   >
                     {publishing ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
@@ -308,7 +308,7 @@ export default function ContentGenerator() {
                   </button>
                   <button
                     onClick={() => setShowScheduleModal(true)}
-                    className="flex-1 py-2.5 rounded-lg bg-white/10 border border-purple-500/30 hover:bg-purple-500/15 text-white text-sm font-medium flex items-center justify-center gap-2 transition"
+                    className="flex-1 py-2.5 rounded-lg bg-violet-50 border border-violet-200 text-violet-700 text-sm font-medium flex items-center justify-center gap-2 transition hover:bg-violet-100"
                   >
                     <Clock size={14} />Schedule
                   </button>
@@ -316,16 +316,16 @@ export default function ContentGenerator() {
               </div>
 
               {!isConnected(formData.platform) && (
-                <p className="text-xs text-gray-500 text-center">
-                  <button onClick={() => navigate('/settings')} className="text-purple-400 hover:text-purple-300 underline">Connect your {formData.platform} account</button> to publish or schedule this post.
+                <p className="text-xs text-slate-500 text-center">
+                  <button onClick={() => navigate('/settings')} className="text-violet-600 hover:text-violet-800 underline">Connect your {formData.platform} account</button> to publish or schedule this post.
                 </p>
               )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-gray-500">
+            <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-slate-500">
               <Sparkles size={40} className="mb-4 opacity-30" />
               <p className="text-sm">Fill in the form and click Generate to create content.</p>
-              <p className="text-xs mt-1 text-gray-600">The AI considers your competitors and business profile.</p>
+              <p className="text-xs mt-1 text-slate-400">The AI considers your competitors and business profile.</p>
             </div>
           )}
         </div>
@@ -334,46 +334,46 @@ export default function ContentGenerator() {
       {showIdeas && (
         <div className="glass-card p-6 relative z-10">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Lightbulb size={18} className="text-yellow-400" /> Content Ideas</h2>
-            <button onClick={() => setShowIdeas(false)} className="text-gray-400 hover:text-white text-sm">Close</button>
+            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2"><Lightbulb size={18} className="text-amber-500" /> Content Ideas</h2>
+            <button onClick={() => setShowIdeas(false)} className="text-slate-500 hover:text-slate-900 text-sm">Close</button>
           </div>
           {loadingIdeas ? (
-            <div className="flex items-center justify-center py-8"><Loader2 size={24} className="animate-spin text-primary-400" /></div>
+            <div className="flex items-center justify-center py-8"><Loader2 size={24} className="animate-spin text-violet-500" /></div>
           ) : ideas?.ideas?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {ideas.ideas.map((idea, i) => (
-                <div key={i} className="bg-dark-bg/50 rounded-xl p-4 border border-dark-border hover:border-primary-500/30 transition-colors">
+                <div key={i} className="bg-slate-50 rounded-xl p-4 border border-app-border hover:border-violet-300 transition-colors">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-primary-500/15 text-primary-400 capitalize">{idea.category}</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 capitalize">{idea.format}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-md bg-violet-50 text-violet-600 capitalize">{idea.category}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 capitalize">{idea.format}</span>
                   </div>
-                  <h4 className="text-white font-medium text-sm mb-1">{idea.title}</h4>
-                  <p className="text-xs text-gray-400 italic mb-2">"{idea.hook}"</p>
-                  <p className="text-xs text-gray-500">{idea.whyItCouldWork}</p>
+                  <h4 className="text-slate-900 font-medium text-sm mb-1">{idea.title}</h4>
+                  <p className="text-xs text-slate-500 italic mb-2">"{idea.hook}"</p>
+                  <p className="text-xs text-slate-600">{idea.whyItCouldWork}</p>
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="text-xs text-gray-500">CTA: <span className="text-gray-400">{idea.cta}</span></span>
+                    <span className="text-xs text-slate-500">CTA: <span className="text-slate-500">{idea.cta}</span></span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-sm text-center py-4">No ideas generated. Try again.</p>
+            <p className="text-slate-500 text-sm text-center py-4">No ideas generated. Try again.</p>
           )}
         </div>
       )}
 
       {history.length > 0 && (
         <div className="glass-card p-6 relative z-10">
-          <h2 className="text-lg font-semibold text-white mb-4">Generated Content History</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Generated Content History</h2>
           <div className="space-y-3 max-h-80 overflow-y-auto">
             {history.map(item => (
-              <div key={item._id} className="bg-dark-bg/50 rounded-xl p-4 border border-dark-border">
+              <div key={item._id} className="bg-slate-50 rounded-xl p-4 border border-app-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary-500/15 text-primary-400 capitalize">{item.platform}</span>
-                  <span className="text-xs text-gray-500">{new Date(item.createdAt).toLocaleDateString()}</span>
-                  {item.engagementScore?.overall > 0 && <span className="text-xs text-gray-400">Score: {item.engagementScore.overall}/100</span>}
+                  <span className="text-xs px-2 py-0.5 rounded-md bg-violet-50 text-violet-600 capitalize">{item.platform}</span>
+                  <span className="text-xs text-slate-500">{new Date(item.createdAt).toLocaleDateString()}</span>
+                  {item.engagementScore?.overall > 0 && <span className="text-xs text-slate-500">Score: {item.engagementScore.overall}/100</span>}
                 </div>
-                <p className="text-sm text-gray-300 line-clamp-2">{item.caption}</p>
+                <p className="text-sm text-slate-600 line-clamp-2">{item.caption}</p>
               </div>
             ))}
           </div>
@@ -381,28 +381,28 @@ export default function ContentGenerator() {
       )}
 
       {showScheduleModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#12151c] border border-white/10 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
-            <button onClick={() => setShowScheduleModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-app-border rounded-2xl w-full max-w-md p-6 relative shadow-lift">
+            <button onClick={() => setShowScheduleModal(false)} className="absolute top-4 right-4 text-slate-500 hover:text-slate-900">
               <X size={20} />
             </button>
-            <h3 className="text-lg font-semibold text-white mb-1 flex items-center gap-2"><Clock size={18} className="text-purple-400" /> Schedule Post</h3>
-            <p className="text-sm text-gray-500 mb-4">Publish automatically to {formData.platform}.</p>
+            <h3 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2"><Clock size={18} className="text-violet-500" /> Schedule Post</h3>
+            <p className="text-sm text-slate-500 mb-4">Publish automatically to {formData.platform}.</p>
             <form onSubmit={handleSchedule} className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Date & Time</label>
+                <label className="block text-sm text-slate-500 mb-1">Date & Time</label>
                 <input
                   type="datetime-local"
                   required
                   value={scheduleForm.scheduledTime}
                   onChange={(e) => setScheduleForm({ scheduledTime: e.target.value })}
-                  className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition"
                 />
               </div>
               <button
                 type="submit"
                 disabled={scheduling}
-                className="w-full py-3 rounded-lg text-white font-medium bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 transition disabled:opacity-70 flex items-center justify-center gap-2"
+                className="gradient-brand w-full py-3 rounded-lg text-white font-medium transition disabled:opacity-70 flex items-center justify-center gap-2 hover:opacity-95"
               >
                 {scheduling ? <Loader2 size={16} className="animate-spin" /> : <Clock size={16} />}
                 {scheduling ? 'Scheduling...' : 'Schedule Post'}
