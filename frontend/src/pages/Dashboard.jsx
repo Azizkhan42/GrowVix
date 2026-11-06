@@ -140,6 +140,30 @@ export default function Dashboard() {
     <div className="space-y-6">
       <WelcomeBanner name={user?.name || 'User'} onAddCompetitor={addCompetitor} />
 
+      {data?.facebookPageData?.isRealData && (
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {data.facebookPageData.pictureUrl ? (
+              <img src={data.facebookPageData.pictureUrl} alt="" className="w-12 h-12 rounded-full border-2 border-white/40 object-cover" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">f</div>
+            )}
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-lg">{data.facebookPageData.pageName}</h3>
+                <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full font-medium">Live Facebook Data</span>
+              </div>
+              <p className="text-blue-100 text-xs mt-0.5">
+                Followers: <span className="font-bold text-white">{data.facebookPageData.followersCount?.toLocaleString()}</span> | Posts Analyzed: <span className="font-bold text-white">{data.facebookPageData.totalPostsAnalyzed}</span> | Engagement Rate: <span className="font-bold text-white">{data.facebookPageData.avgEngagementRate}%</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate('/analytics')} className="bg-white text-blue-700 px-4 py-2 rounded-xl text-xs font-semibold hover:bg-blue-50 transition">View Live Insights</button>
+          </div>
+        </div>
+      )}
+
       <section aria-label="Key metrics" className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, i) => (
           <StatCard key={stat.key} {...stat} delay={i * 70} />

@@ -86,6 +86,43 @@ export default function Analytics() {
 
       {activeTab === 'overview' && (
         <div className="space-y-6 relative z-10">
+          {overview?.facebookPageData?.isRealData && (
+            <div className="glass-card p-6 border border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  {overview.facebookPageData.pictureUrl ? (
+                    <img src={overview.facebookPageData.pictureUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">f</div>
+                  )}
+                  <div>
+                    <h3 className="font-semibold text-slate-900">{overview.facebookPageData.pageName}</h3>
+                    <p className="text-xs text-blue-600 font-medium">Connected Facebook Page (Real Authentic Data)</p>
+                  </div>
+                </div>
+                <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full font-semibold">Live API Sync</span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+                <div className="bg-white p-3 rounded-xl border border-blue-100 text-center">
+                  <p className="text-xl font-bold text-slate-900">{overview.facebookPageData.followersCount?.toLocaleString()}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Page Followers</p>
+                </div>
+                <div className="bg-white p-3 rounded-xl border border-blue-100 text-center">
+                  <p className="text-xl font-bold text-slate-900">{overview.facebookPageData.totalPostsAnalyzed}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Page Posts</p>
+                </div>
+                <div className="bg-white p-3 rounded-xl border border-blue-100 text-center">
+                  <p className="text-xl font-bold text-slate-900">{(overview.facebookPageData.totalLikes + overview.facebookPageData.totalComments + overview.facebookPageData.totalShares).toLocaleString()}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Total Engagements</p>
+                </div>
+                <div className="bg-white p-3 rounded-xl border border-blue-100 text-center">
+                  <p className="text-xl font-bold text-emerald-600">{overview.facebookPageData.avgEngagementRate}%</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Engagement Rate</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="glass-card p-4 text-center">
               <p className="text-2xl font-bold text-slate-900">{overview?.totalCompetitors || 0}</p>

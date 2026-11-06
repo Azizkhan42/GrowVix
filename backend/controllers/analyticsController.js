@@ -4,26 +4,41 @@ import AIInsight from '../models/AIInsight.js';
 import Content from '../models/Content.js';
 import SocialAccount from '../models/SocialAccount.js';
 import ScheduledPost from '../models/ScheduledPost.js';
+import { fetchFacebookPageData } from '../services/facebookService.js';
 
 export const getOverview = async (req, res) => {
   try {
-    const competitors = await Competitor.find({ userId: req.user.id });
+    const [competitors, contents, scheduledPosts, socialAccounts, fbData] = await Promise.all([
+      Competitor.find({ userId: req.user.id }),
+      Content.find({ userId: req.user.id }),
+      ScheduledPost.find({ userId: req.user.id }),
+      SocialAccount.find({ userId: req.user.id }),
+      fetchFacebookPageData(req.user.id)
+    ]);
+
     const competitorIds = competitors.map(c => c._id);
-    const posts = await Post.find({ competitorId: { $in: competitorIds } });
-    const contents = await Content.find({ userId: req.user.id });
-    const scheduledPosts = await ScheduledPost.find({ userId: req.user.id });
-    const socialAccounts = await SocialAccount.find({ userId: req.user.id });
+    let posts = await Post.find({ competitorId: { $in: competitorIds } });
 
-    const totalPostsAnalyzed = posts.length;
-    let totalEngagement = 0;
-    posts.forEach(p => { totalEngagement += p.engagementRate; });
+    // If real Facebook page data exists, combine or use real posts
+    let totalPostsAnalyzed = posts.length;
+    let totalLikes = posts.reduce((sum, p) => sum + p.likes, 0);
+    let totalComments = posts.reduce((sum, p) => sum + p.comments, 0);
+    let totalShares = posts.reduce((sum, p) => sum + p.shares, 0);
+
+    let topPosts = [...posts];
+
+    if (fbData && fbData.isRealData) {
+      totalPostsAnalyzed += fbData.totalPostsAnalyzed;
+      totalLikes += fbData.totalLikes;
+      totalComments += fbData.totalComments;
+      totalShares += fbData.totalShares;
+      topPosts = [...fbData.topPosts, ...topPosts];
+    }
+
+    const totalEngagement = topPosts.reduce((sum, p) => sum + (p.likes + p.comments + p.shares), 0);
     const avgEngagementRate = totalPostsAnalyzed > 0
-      ? (totalEngagement / totalPostsAnalyzed).toFixed(2)
-      : 0;
-
-    const totalLikes = posts.reduce((sum, p) => sum + p.likes, 0);
-    const totalComments = posts.reduce((sum, p) => sum + p.comments, 0);
-    const totalShares = posts.reduce((sum, p) => sum + p.shares, 0);
+      ? (topPosts.reduce((sum, p) => sum + (p.engagementRate || 0), 0) / totalPostsAnalyzed).toFixed(2)
+      : (fbData?.avgEngagementRate || 0);
 
     const platformBreakdown = {};
     competitors.forEach(c => {
@@ -32,6 +47,10 @@ export const getOverview = async (req, res) => {
         platformBreakdown[p] = (platformBreakdown[p] || 0) + 1;
       });
     });
+
+    if (fbData && fbData.isRealData) {
+      platformBreakdown['facebook'] = (platformBreakdown['facebook'] || 0) + fbData.totalPostsAnalyzed;
+    }
 
     const contentByPlatform = {};
     contents.forEach(c => {
@@ -50,13 +69,13 @@ export const getOverview = async (req, res) => {
     const publishedScheduled = scheduledPosts.filter(s => s.status === 'published').length;
 
     res.json({
-      totalCompetitors: competitors.length,
+      totalCompetitors: competitors.length + (fbData?.isRealData ? 1 : 0),
       totalPostsAnalyzed,
       avgEngagementRate,
       totalLikes,
       totalComments,
       totalShares,
-      topPosts: posts.sort((a, b) => b.engagementRate - a.engagementRate).slice(0, 5),
+      topPosts: topPosts.sort((a, b) => (b.totalEngagement || (b.likes + b.comments + b.shares)) - (a.totalEngagement || (a.likes + a.comments + a.shares))).slice(0, 5),
       platformBreakdown,
       contentByPlatform,
       recentContent,
@@ -68,7 +87,8 @@ export const getOverview = async (req, res) => {
         published: publishedScheduled
       },
       connectedPlatforms: socialAccounts.length,
-      connectedPlatformNames: socialAccounts.map(a => a.platform)
+      connectedPlatformNames: socialAccounts.map(a => a.platform),
+      facebookPageData: fbData || null
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -77,13 +97,20 @@ export const getOverview = async (req, res) => {
 
 export const getDetailedAnalytics = async (req, res) => {
   try {
-    const competitors = await Competitor.find({ userId: req.user.id });
+    const [competitors, contents, fbData] = await Promise.all([
+      Competitor.find({ userId: req.user.id }),
+      Content.find({ userId: req.user.id }),
+      fetchFacebookPageData(req.user.id)
+    ]);
+
     const competitorIds = competitors.map(c => c._id);
-    const posts = await Post.find({ competitorId: { $in: competitorIds } });
-    const contents = await Content.find({ userId: req.user.id });
+    let posts = await Post.find({ competitorId: { $in: competitorIds } });
+
+    if (fbData && fbData.isRealData && fbData.allPosts) {
+      posts = [...fbData.allPosts, ...posts];
+    }
 
     const engagementOverTime = buildEngagementTimeline(posts);
-
     const contentTypePerformance = buildContentTypePerformance(posts);
 
     const myContentScores = contents
@@ -102,12 +129,13 @@ export const getDetailedAnalytics = async (req, res) => {
       contentTypePerformance,
       myContentScores,
       weeklyGrowth,
+      facebookPageData: fbData || null,
       summary: {
-        totalCompetitors: competitors.length,
+        totalCompetitors: competitors.length + (fbData?.isRealData ? 1 : 0),
         totalAnalyzedPosts: posts.length,
         totalGeneratedContent: contents.length,
         avgEngagementRate: posts.length > 0
-          ? (posts.reduce((s, p) => s + p.engagementRate, 0) / posts.length).toFixed(2)
+          ? (posts.reduce((s, p) => s + (p.engagementRate || 0), 0) / posts.length).toFixed(2)
           : 0
       }
     });
@@ -121,6 +149,7 @@ function buildEngagementTimeline(posts) {
   posts.forEach(p => {
     if (!p.postDate) return;
     const date = new Date(p.postDate);
+    if (isNaN(date.getTime())) return;
     const weekStart = new Date(date);
     weekStart.setDate(date.getDate() - date.getDay());
     const key = weekStart.toISOString().split('T')[0];
@@ -128,9 +157,9 @@ function buildEngagementTimeline(posts) {
     if (!weekly[key]) {
       weekly[key] = { week: key, likes: 0, comments: 0, shares: 0, count: 0 };
     }
-    weekly[key].likes += p.likes;
-    weekly[key].comments += p.comments;
-    weekly[key].shares += p.shares;
+    weekly[key].likes += (p.likes || 0);
+    weekly[key].comments += (p.comments || 0);
+    weekly[key].shares += (p.shares || 0);
     weekly[key].count += 1;
   });
 
@@ -145,14 +174,14 @@ function buildContentTypePerformance(posts) {
       types[type] = { type, count: 0, totalEngagement: 0, totalLikes: 0, totalComments: 0, avgEngagementRate: 0 };
     }
     types[type].count += 1;
-    types[type].totalEngagement += p.likes + p.comments + p.shares;
-    types[type].totalLikes += p.likes;
-    types[type].totalComments += p.comments;
+    types[type].totalEngagement += (p.likes || 0) + (p.comments || 0) + (p.shares || 0);
+    types[type].totalLikes += (p.likes || 0);
+    types[type].totalComments += (p.comments || 0);
   });
 
   return Object.values(types).map(t => ({
     ...t,
-    avgEngagementRate: t.count > 0 ? (posts.filter(p => (p.contentType || 'unknown') === t.type).reduce((s, p) => s + p.engagementRate, 0) / t.count).toFixed(2) : 0
+    avgEngagementRate: t.count > 0 ? (posts.filter(p => (p.contentType || 'unknown') === t.type).reduce((s, p) => s + (p.engagementRate || 0), 0) / t.count).toFixed(2) : 0
   }));
 }
 
