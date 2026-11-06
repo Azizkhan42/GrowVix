@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, LogOut, Menu, Search, Settings as SettingsIcon, ChevronDown, User } from 'lucide-react';
+import { Bell, LogOut, Menu, Search, Settings as SettingsIcon, ChevronDown, User, Crown } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -88,6 +88,13 @@ export default function Navbar({ onOpenSidebar }) {
           <SettingsIcon size={20} />
         </Link>
 
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('open-pricing'))}
+          className="hidden md:flex items-center gap-1.5 gradient-brand text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-sm hover:opacity-95 transition-all"
+        >
+          <Crown size={14} /> Upgrade Plan
+        </button>
+
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((open) => !open)}
@@ -147,6 +154,16 @@ export default function Navbar({ onOpenSidebar }) {
               >
                 <SettingsIcon size={16} /> Settings
               </Link>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-pricing'));
+                }}
+                role="menuitem"
+                className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-violet-700 transition-colors hover:bg-violet-50"
+              >
+                <Crown size={16} /> Upgrade Plan
+              </button>
 
               <div className="my-1 h-px bg-app-border" />
 

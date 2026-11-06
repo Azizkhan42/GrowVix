@@ -129,3 +129,26 @@ export const changePassword = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const updatePlan = async (req, res) => {
+  try {
+    const { plan } = req.body;
+    if (!['free', 'pro', 'agency'].includes(plan)) {
+      return res.status(400).json({ message: 'Invalid subscription plan' });
+    }
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.plan = plan;
+    await user.save();
+
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      plan: user.plan
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

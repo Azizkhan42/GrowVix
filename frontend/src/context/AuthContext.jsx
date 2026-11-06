@@ -41,8 +41,20 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updatePlan = async (plan) => {
+    try {
+      const { data } = await api.put('/auth/plan', { plan });
+      const updatedUser = { ...user, plan: data.plan };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Failed to update plan';
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updatePlan }}>
       {children}
     </AuthContext.Provider>
   );

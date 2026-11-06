@@ -45,12 +45,12 @@ export function UpgradeCard() {
       <p className="mb-3 text-[11px] leading-relaxed text-white/80">
         Unlock advanced AI insights, competitor tracking and more.
       </p>
-      <Link
-        to="/settings"
-        className="block w-full rounded-lg bg-white py-2 text-center text-xs font-semibold text-violet-700 transition hover:bg-violet-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+      <button
+        onClick={() => window.dispatchEvent(new CustomEvent('open-pricing'))}
+        className="block w-full rounded-lg bg-white py-2 text-center text-xs font-semibold text-violet-700 transition hover:bg-violet-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 cursor-pointer"
       >
         Upgrade Now
-      </Link>
+      </button>
     </div>
   );
 }

@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import PricingModal from './PricingModal';
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [pricingOpen, setPricingOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenPricing = () => setPricingOpen(true);
+    window.addEventListener('open-pricing', handleOpenPricing);
+    return () => window.removeEventListener('open-pricing', handleOpenPricing);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-app-bg text-slate-600">
@@ -19,6 +27,8 @@ export default function Layout() {
           </div>
         </main>
       </div>
+
+      <PricingModal isOpen={pricingOpen} onClose={() => setPricingOpen(false)} />
     </div>
   );
 }
