@@ -1,16 +1,23 @@
-import { useState } from 'react';
-import { Sparkles, Send, Mail, MapPin, Phone, CheckCircle2 } from 'lucide-react';
+import { useState } from "react";
+import {
+  Sparkles,
+  Send,
+  Mail,
+  MapPin,
+  Phone,
+  CheckCircle2,
+} from "lucide-react";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,15 +26,15 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       // Simulate submission or call API if available
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSuccess(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      setError('Failed to send message. Please try again.');
+      setError("Failed to send message. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -45,7 +52,8 @@ export default function Contact() {
             We'd Love to Hear From You
           </h1>
           <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Have questions about GrowVix features, pricing, or enterprise plans? Drop us a message below.
+            Have questions about GrowVix features, pricing, or enterprise plans?
+            Drop us a message below.
           </p>
         </div>
       </section>
@@ -57,8 +65,13 @@ export default function Contact() {
             {/* Info Column */}
             <div className="space-y-8">
               <div className="rounded-2xl border border-app-border bg-white p-8 shadow-soft space-y-6">
-                <h3 className="text-xl font-bold text-slate-900">Contact Information</h3>
-                <p className="text-sm text-slate-600">Our support team is available Monday through Friday to assist you.</p>
+                <h3 className="text-xl font-bold text-slate-900">
+                  Contact Information
+                </h3>
+                <p className="text-sm text-slate-600">
+                  Our support team is available Monday through Friday to assist
+                  you.
+                </p>
 
                 <div className="space-y-4 pt-2 text-sm text-slate-700">
                   <div className="flex items-center gap-3">
@@ -84,9 +97,12 @@ export default function Contact() {
                   <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-2">
                     <CheckCircle2 size={32} />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900">Message Sent Successfully!</h3>
+                  <h3 className="text-2xl font-bold text-slate-900">
+                    Message Sent Successfully!
+                  </h3>
                   <p className="text-sm text-slate-600 max-w-md mx-auto">
-                    Thank you for reaching out. A member of our support team will get back to you within 24 hours.
+                    Thank you for reaching out. A member of our support team
+                    will get back to you within 24 hours.
                   </p>
                   <button
                     onClick={() => setSuccess(false)}
@@ -97,7 +113,9 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">Send Us a Message</h3>
+                  <h3 className="text-xl font-bold text-slate-900 mb-4">
+                    Send Us a Message
+                  </h3>
 
                   {error && (
                     <div className="rounded-xl bg-red-50 p-4 text-sm text-red-600 border border-red-200">
@@ -107,7 +125,9 @@ export default function Contact() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Your Name</label>
+                      <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                        Your Name
+                      </label>
                       <input
                         type="text"
                         name="name"
@@ -119,21 +139,25 @@ export default function Contact() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Email Address</label>
+                      <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                        Email Address
+                      </label>
                       <input
                         type="email"
                         name="email"
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="john@company.com"
+                        placeholder="Email"
                         className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Subject</label>
+                    <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Subject
+                    </label>
                     <input
                       type="text"
                       name="subject"
@@ -146,7 +170,9 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Message</label>
+                    <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Message
+                    </label>
                     <textarea
                       name="message"
                       required
