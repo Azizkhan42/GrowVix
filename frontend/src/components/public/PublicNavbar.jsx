@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowRight, Sparkles, LayoutDashboard } from 'lucide-react';
 import Logo from '../Logo';
 import { useAuth } from '../../context/useAuth';
@@ -17,10 +17,6 @@ export default function PublicNavbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -112,6 +108,7 @@ export default function PublicNavbar() {
                 <Link
                   key={link.name}
                   to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
                   className={`rounded-xl px-4 py-3 text-base font-medium transition ${
                     isActive
                       ? 'bg-violet-50 text-violet-700 font-semibold'
@@ -127,6 +124,7 @@ export default function PublicNavbar() {
             {user ? (
               <Link
                 to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
                 className="gradient-brand flex items-center justify-center gap-2 rounded-xl py-3 text-center text-sm font-semibold text-white shadow"
               >
                 <LayoutDashboard size={18} />
@@ -136,12 +134,14 @@ export default function PublicNavbar() {
               <>
                 <Link
                   to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="flex w-full items-center justify-center rounded-xl border border-slate-200 py-3 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="gradient-brand flex items-center justify-center gap-2 rounded-xl py-3 text-center text-sm font-semibold text-white shadow transition"
                 >
                   <span>Get Started Free</span>

@@ -33,7 +33,7 @@ export default function Contact() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
-    } catch (err) {
+    } catch {
       setError("Failed to send message. Please try again.");
     } finally {
       setLoading(false);
