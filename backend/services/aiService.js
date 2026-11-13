@@ -80,6 +80,16 @@ Provide a JSON analysis with:
   "strengths": ["<list of strengths>"],
   "weaknesses": ["<list of weaknesses>"],
   "contentThemes": ["<recurring themes>"],
+  "executiveSummary": "<2-3 sentence executive summary>",
+  "opportunities": ["<list of opportunities>"],
+  "threats": ["<list of threats>"],
+  "marketingGaps": [
+    {"gap": "<gap description>", "action": "<recommended action>"}
+  ],
+  "recommendations": ["<recommendation 1>", "<recommendation 2>"],
+  "contentIdeas": [
+    {"title": "<idea title>", "format": "<format>", "description": "<description>"}
+  ],
   "aiSummary": "<2-3 sentence executive summary>"
 }
 

@@ -4,8 +4,6 @@ const APIFY_API = 'https://api.apify.com/v2';
 const POLL_INTERVAL = 4000;
 const MAX_POLLS = 40;
 
-// Free, public-data Instagram actor (no login required). Respects platform rules:
-// only publicly accessible profile/post data is collected.
 const INSTAGRAM_ACTOR = 'clockworks/free-instagram-profile-scraper';
 
 function hasApifyToken() {
@@ -62,12 +60,12 @@ async function runActorAndGetItems(actorId, input) {
 
 export async function fetchInstagramData(username, resultsLimit = 15) {
   if (!hasApifyToken()) {
-    return { unavailable: true, reason: 'No Apify API token configured. Add APIFY_API_TOKEN to .env for real competitor data.' };
+    return { unavailable: true, reason: 'No Apify API token configured. Add APIFY_API_TOKEN to .env for real competitor data.', status: 'Authentication Required' };
   }
 
   const clean = extractUsername(username);
   if (!clean) {
-    return { unavailable: true, reason: 'No valid Instagram username provided.' };
+    return { unavailable: true, reason: 'No valid Instagram username provided.', status: 'Failed' };
   }
 
   try {
@@ -77,7 +75,7 @@ export async function fetchInstagramData(username, resultsLimit = 15) {
     });
 
     if (!items.length) {
-      return { unavailable: true, reason: 'Apify returned no data for this profile.' };
+      return { unavailable: true, reason: 'Apify returned no data for this profile.', status: 'Restricted' };
     }
 
     const profileItem = items.find(i => i.followersCount !== undefined) || {};
@@ -119,18 +117,65 @@ export async function fetchInstagramData(username, resultsLimit = 15) {
         contentType: ['video', 'reel'].includes(postType) ? 'reel' : postType === 'carousel' ? 'carousel' : 'image',
         contentCategory: 'unknown',
         hashtags: (p.caption || '').match(/#[\w\u0600-\u06FF]+/gi)?.map(h => h) || [],
-        rawId: p.id || p.shortCode || null
+        externalPostId: p.id || p.shortCode || String(idx),
+        dataSource: 'Apify'
       };
     });
 
-    return { profile, posts: mappedPosts, username: clean };
+    return { profile, posts: mappedPosts, username: clean, status: 'Completed' };
   } catch (error) {
     console.error('[Apify] Instagram fetch error:', error.message);
     return {
       unavailable: true,
+      status: error.message.includes('429') || error.message.includes('403') ? 'Restricted' : 'Failed',
       reason: error.message.includes('429') || error.message.includes('403')
-        ? 'Apify rate limit reached. Please try again in a few minutes.'
-        : 'Could not fetch real data from Instagram. The profile may not exist or is restricted.'
+        ? 'Apify rate limit or access restriction reached.'
+        : `Could not fetch real data from Instagram: ${error.message}`
+    };
+  }
+}
+
+export async function fetchWebsiteData(websiteUrl) {
+  if (!websiteUrl) return { unavailable: true, status: 'Unsupported', reason: 'No website URL provided' };
+  try {
+    const targetUrl = websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`;
+    const { data } = await axios.get(targetUrl, { timeout: 10000, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
+    
+    // Extract title and meta description using regex
+    const titleMatch = data.match(/<title[^>]*>([^<]+)<\/title>/i);
+    const descMatch = data.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i) || data.match(/<meta\s+content=["']([^"']+)["']\s+name=["']description["']/i);
+
+    const title = titleMatch ? titleMatch.text || titleMatch[1].trim() : targetUrl;
+    const description = descMatch ? descMatch[1].trim() : '';
+
+    return {
+      unavailable: false,
+      status: 'Completed',
+      profile: {
+        title,
+        description,
+        profileUrl: targetUrl,
+        lastUpdated: new Date()
+      },
+      posts: [{
+        platform: 'website',
+        caption: `Website Landing Page: ${title} - ${description}`,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        postUrl: targetUrl,
+        postDate: new Date(),
+        contentType: 'link',
+        contentCategory: 'promotional',
+        externalPostId: `web-${Date.now()}`,
+        dataSource: 'Website Scraper'
+      }]
+    };
+  } catch (error) {
+    return {
+      unavailable: true,
+      status: 'Failed',
+      reason: `Could not reach website: ${error.message}`
     };
   }
 }

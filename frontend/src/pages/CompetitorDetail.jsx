@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Globe, MapPin, Briefcase, TrendingUp, BarChart2, Users, MessageCircle, Heart, Share2, Loader2, Download, Instagram, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Globe, MapPin, Briefcase, TrendingUp, BarChart2, Users, MessageCircle, Heart, Share2, Loader2, Download, Instagram, CheckCircle2, AlertCircle, ShieldAlert, Sparkles, Target, Layers } from 'lucide-react';
 import api from '../services/api';
 
 export default function CompetitorDetail() {
@@ -38,6 +38,7 @@ export default function CompetitorDetail() {
     try {
       const { data } = await api.post(`/competitors/analyze/${id}`);
       setAnalysis(data.analysis || data);
+      await fetchData();
     } catch (err) {
       console.error(err);
     } finally {
@@ -51,9 +52,9 @@ export default function CompetitorDetail() {
     try {
       const { data } = await api.post(`/competitors/fetch-data/${id}`);
       if (data.unavailable) {
-        setFetchMsg(`No real data: ${data.reason}`);
+        setFetchMsg(`Collection notice: ${data.reason}`);
       } else {
-        setFetchMsg(`Imported ${data.newPosts} new posts of ${data.postsFetched} from Instagram.`);
+        setFetchMsg(`Successfully imported ${data.newPosts} new posts (${data.postsFetched} fetched).`);
         await fetchData();
       }
     } catch (err) {
@@ -75,148 +76,232 @@ export default function CompetitorDetail() {
     return (
       <div className="text-center py-20 text-slate-500">
         <p>Competitor not found.</p>
-        <button onClick={() => navigate('/competitors')} className="text-purple-400 mt-4 hover:text-purple-300">Back to Competitors</button>
+        <button onClick={() => navigate('/competitors')} className="text-violet-600 mt-4 hover:underline">Back to Competitors</button>
       </div>
     );
   }
 
   const stats = competitor.stats || {};
+  const platformStatuses = competitor.platformStatuses || [];
 
   return (
-    <div className="space-y-6">
-      <button onClick={() => navigate('/competitors')} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors">
-        <ArrowLeft size={18} /> Back to Competitors
+    <div className="space-y-6 pb-20">
+      <button onClick={() => navigate('/competitors')} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-sm font-medium">
+        <ArrowLeft size={16} /> Back to Competitors
       </button>
 
-      <div className="glass-card p-5 sm:p-6">
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
-          <div className="flex items-center gap-4 min-w-0">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center text-slate-900 font-bold text-xl sm:text-2xl shadow-lg shrink-0">
-              {(competitor.name || 'C').charAt(0).toUpperCase()}
+      {/* Competitor Header */}
+      <div className="glass-card p-6 md:p-8">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+          <div className="flex items-start gap-4 min-w-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl gradient-brand flex items-center justify-center text-white font-bold text-2xl shadow-lg shrink-0">
+              {competitor.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 break-words">{competitor.name || competitor.username}</h1>
-              <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-500">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 break-words">{competitor.name}</h1>
+                <span className="text-xs px-3 py-1 rounded-full bg-violet-50 text-violet-700 font-semibold">{competitor.competitorType || 'Direct Competitor'}</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500">
                 {competitor.industry && <span className="flex items-center gap-1"><Briefcase size={14} />{competitor.industry}</span>}
                 {competitor.location && <span className="flex items-center gap-1"><MapPin size={14} />{competitor.location}</span>}
-                {competitor.website && <a href={competitor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-violet-600 hover:text-violet-800"><Globe size={14} />Website</a>}
+                {competitor.website && <a href={competitor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-violet-600 hover:underline"><Globe size={14} />Website</a>}
               </div>
               <div className="flex flex-wrap gap-2 mt-3">
-                {competitor.instagramProfile && <span className="text-xs px-3 py-1 rounded-full bg-pink-500/15 text-pink-400">Instagram</span>}
-                {competitor.linkedinPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-500/15 text-blue-400">LinkedIn</span>}
-                {competitor.facebookPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-600/15 text-blue-300">Facebook</span>}
-                {competitor.twitterHandle && <span className="text-xs px-3 py-1 rounded-full bg-sky-500/15 text-sky-400">Twitter</span>}
+                {competitor.instagramProfile && <span className="text-xs px-3 py-1 rounded-full bg-pink-50 text-pink-600 font-medium">Instagram</span>}
+                {competitor.linkedinPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 font-medium">LinkedIn</span>}
+                {competitor.facebookPage && <span className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 font-medium">Facebook</span>}
+                {competitor.twitterHandle && <span className="text-xs px-3 py-1 rounded-full bg-sky-50 text-sky-600 font-medium">Twitter</span>}
+                {competitor.tiktokProfile && <span className="text-xs px-3 py-1 rounded-full bg-slate-900 text-white font-medium">TikTok</span>}
+                {competitor.youtubeChannel && <span className="text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 font-medium">YouTube</span>}
               </div>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 shrink-0">
-            <button onClick={fetchRealData} disabled={fetching} className="bg-white border border-app-border hover:bg-slate-50 text-slate-900 px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center">
-              {fetching ? <><Loader2 size={16} className="animate-spin" />Fetching...</> : <><Download size={16} />Fetch Real Data</>}
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <button
+              onClick={fetchRealData}
+              disabled={fetching}
+              className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 px-5 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center shadow-sm"
+            >
+              {fetching ? <><Loader2 size={16} className="animate-spin" />Fetching Data...</> : <><Download size={16} />Fetch Real Data</>}
             </button>
-            <button onClick={runAnalysis} disabled={analyzing} className="gradient-brand text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center hover:opacity-95">
-              {analyzing ? <><Loader2 size={16} className="animate-spin" />Analyzing...</> : <><BarChart2 size={16} />Run AI Analysis</>}
+            <button
+              onClick={runAnalysis}
+              disabled={analyzing}
+              className="gradient-brand text-white px-6 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2 disabled:opacity-50 justify-center shadow-md hover:opacity-95"
+            >
+              {analyzing ? <><Loader2 size={16} className="animate-spin" />Analyzing...</> : <><Sparkles size={16} />Run AI Analysis</>}
             </button>
           </div>
         </div>
+
         {fetchMsg && (
-          <div className={`mt-4 text-sm p-3 rounded-lg border ${fetchMsg.includes('Imported') ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
-            {fetchMsg}
+          <div className={`mt-4 text-sm p-3.5 rounded-xl border flex items-center gap-2 ${fetchMsg.includes('Successfully') ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
+            <AlertCircle size={16} />
+            <span>{fetchMsg}</span>
+          </div>
+        )}
+
+        {(competitor.description || competitor.businessDescription || competitor.notes) && (
+          <div className="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(competitor.description || competitor.businessDescription) && (
+              <div>
+                <h4 className="text-xs font-semibold uppercase text-slate-400 mb-1">Business Description</h4>
+                <p className="text-sm text-slate-600">{competitor.description || competitor.businessDescription}</p>
+              </div>
+            )}
+            {competitor.notes && (
+              <div>
+                <h4 className="text-xs font-semibold uppercase text-slate-400 mb-1">Internal Notes</h4>
+                <p className="text-sm text-slate-600">{competitor.notes}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {competitor.profileData?.followers > 0 && (
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2"><Instagram size={18} className="text-pink-600" /> Instagram Profile</h2>
-            {competitor.profileData.isVerified && <span className="text-xs flex items-center gap-1 text-blue-400"><CheckCircle2 size={12} /> Verified</span>}
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <p className="text-xl font-bold text-slate-900">{(competitor.profileData.followers || 0).toLocaleString()}</p>
-              <p className="text-xs text-slate-500 mt-1">Followers</p>
-            </div>
-            <div>
-              <p className="text-xl font-bold text-slate-900">{(competitor.profileData.following || 0).toLocaleString()}</p>
-              <p className="text-xs text-slate-500 mt-1">Following</p>
-            </div>
-            <div>
-              <p className="text-xl font-bold text-slate-900">{(competitor.profileData.postCount || 0).toLocaleString()}</p>
-              <p className="text-xs text-slate-500 mt-1">Posts</p>
-            </div>
-            <div>
-              <a href={competitor.profileData.profileUrl} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:text-violet-800 text-sm">Open Profile</a>
-              {competitor.profileData.lastUpdated && <p className="text-xs text-slate-400 mt-1">Updated {new Date(competitor.profileData.lastUpdated).toLocaleDateString()}</p>}
-            </div>
-          </div>
-          {competitor.profileData.bio && <p className="text-sm text-slate-600 mt-3 border-t border-app-border pt-3">{competitor.profileData.bio}</p>}
-        </div>
-      )}
-
+      {/* Overview Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-slate-900">{stats.totalPosts || 0}</p>
-          <p className="text-xs text-slate-500 mt-1">Total Posts</p>
+        <div className="glass-card p-5 text-center">
+          <p className="text-3xl font-extrabold text-slate-900">{stats.totalPosts || 0}</p>
+          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">Total Posts</p>
         </div>
-        <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-slate-900">{stats.avgEngagement || 0}%</p>
-          <p className="text-xs text-slate-500 mt-1">Avg Engagement</p>
+        <div className="glass-card p-5 text-center">
+          <p className="text-3xl font-extrabold text-violet-600">{stats.avgEngagement || 0}%</p>
+          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">Avg Engagement Rate</p>
         </div>
-        <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-slate-900">{(stats.totalLikes || 0).toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-1">Total Likes</p>
+        <div className="glass-card p-5 text-center">
+          <p className="text-3xl font-extrabold text-slate-900">{(stats.totalLikes || 0).toLocaleString()}</p>
+          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">Total Likes</p>
         </div>
-        <div className="glass-card p-4 text-center">
-          <p className="text-2xl font-bold text-slate-900">{(stats.totalComments || 0).toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-1">Total Comments</p>
+        <div className="glass-card p-5 text-center">
+          <p className="text-3xl font-extrabold text-slate-900">{competitor.digitalScore || 0}/100</p>
+          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">Digital Strength Score</p>
         </div>
       </div>
 
-      {analysis && (
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2"><BarChart2 size={20} className="text-violet-500" /> AI Content Analysis</h2>
-          {analysis.aiSummary && <p className="text-slate-600 text-sm mb-4 p-3 bg-slate-50 border border-app-border rounded-lg">{analysis.aiSummary}</p>}
+      {/* Platform Status Cards */}
+      <div className="glass-card p-6">
+        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Layers size={18} className="text-violet-600" /> Platform Integration Status
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {['instagram', 'website', 'facebook', 'linkedin', 'tiktok', 'youtube', 'twitter'].map(platform => {
+            const statusObj = platformStatuses.find(p => p.platform === platform) || { status: 'Connected' };
+            const isConfigured = Boolean(
+              (platform === 'instagram' && competitor.instagramProfile) ||
+              (platform === 'website' && competitor.website) ||
+              (platform === 'facebook' && competitor.facebookPage) ||
+              (platform === 'linkedin' && competitor.linkedinPage) ||
+              (platform === 'tiktok' && competitor.tiktokProfile) ||
+              (platform === 'youtube' && competitor.youtubeChannel) ||
+              (platform === 'twitter' && competitor.twitterHandle)
+            );
 
-          {analysis.contentDistribution && Object.keys(analysis.contentDistribution).length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-slate-900 mb-2">Content Distribution</h3>
-              <div className="flex gap-2 flex-wrap">
-                {Object.entries(analysis.contentDistribution).map(([key, val]) => (
-                  <div key={key} className="flex items-center gap-2 text-sm">
-                    <span className="text-slate-500 capitalize">{key.replace(/_/g, ' ')}</span>
-                    <span className="text-slate-900 font-medium">{val}%</span>
-                  </div>
-                ))}
+            if (!isConfigured) return null;
+
+            return (
+              <div key={platform} className="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-900 capitalize">{platform}</h4>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {statusObj.lastSuccessfulFetchAt ? `Synced ${new Date(statusObj.lastSuccessfulFetchAt).toLocaleDateString()}` : 'Not synced yet'}
+                  </p>
+                </div>
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                  statusObj.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' :
+                  statusObj.status === 'Restricted' || statusObj.status === 'Failed' ? 'bg-rose-100 text-rose-800' :
+                  'bg-blue-100 text-blue-800'
+                }`}>
+                  {statusObj.status}
+                </span>
               </div>
-            </div>
-          )}
+            );
+          })}
+        </div>
+      </div>
 
-          {analysis.strengths?.length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-emerald-600 mb-2">Strengths</h3>
-              <ul className="space-y-1">
-                {analysis.strengths.map((s, i) => <li key={i} className="text-sm text-slate-600">- {s}</li>)}
-              </ul>
-            </div>
-          )}
-
-          {analysis.weaknesses?.length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-rose-600 mb-2">Weaknesses</h3>
-              <ul className="space-y-1">
-                {analysis.weaknesses.map((w, i) => <li key={i} className="text-sm text-slate-600">- {w}</li>)}
-              </ul>
-            </div>
-          )}
-
-          {analysis.topPatterns?.length > 0 && (
+      {/* Instagram Profile Box (if available) */}
+      {competitor.profileData?.followers > 0 && (
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2"><Instagram size={18} className="text-pink-600" /> Instagram Profile Metrics</h2>
+            {competitor.profileData.isVerified && <span className="text-xs flex items-center gap-1 text-blue-600 font-medium"><CheckCircle2 size={14} /> Verified Account</span>}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <h3 className="text-sm font-medium text-blue-600 mb-2">Top Patterns</h3>
+              <p className="text-2xl font-bold text-slate-900">{(competitor.profileData.followers || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-1">Followers</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-900">{(competitor.profileData.following || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-1">Following</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-900">{(competitor.profileData.postCount || 0).toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mt-1">Total Posts</p>
+            </div>
+            <div>
+              <a href={competitor.profileData.profileUrl} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:underline text-sm font-semibold flex items-center gap-1">Open Profile <ExternalLink size={12} /></a>
+              {competitor.profileData.lastUpdated && <p className="text-xs text-slate-400 mt-1">Updated {new Date(competitor.profileData.lastUpdated).toLocaleDateString()}</p>}
+            </div>
+          </div>
+          {competitor.profileData.bio && <p className="text-sm text-slate-600 mt-4 border-t border-slate-100 pt-3">{competitor.profileData.bio}</p>}
+        </div>
+      )}
+
+      {/* AI Content Analysis Dashboard */}
+      {analysis && (
+        <div className="glass-card p-6 md:p-8 space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2"><Sparkles size={20} className="text-violet-600" /> AI Competitor Intelligence Report</h2>
+            <span className="text-xs text-slate-400">Analyzed {new Date(analysis.calculatedAt || Date.now()).toLocaleDateString()}</span>
+          </div>
+
+          {analysis.executiveSummary && (
+            <div className="p-4 bg-violet-50 border border-violet-100 rounded-xl">
+              <h4 className="text-xs font-semibold uppercase text-violet-700 mb-1">Executive Summary</h4>
+              <p className="text-sm text-slate-700">{analysis.executiveSummary}</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {analysis.strengths?.length > 0 && (
+              <div className="p-5 bg-emerald-50/50 border border-emerald-100 rounded-2xl">
+                <h4 className="text-sm font-bold text-emerald-800 mb-3 flex items-center gap-2"><CheckCircle2 size={16} /> Key Strengths</h4>
+                <ul className="space-y-2">
+                  {analysis.strengths.map((s, i) => <li key={i} className="text-sm text-slate-700 flex items-start gap-2">• <span>{s}</span></li>)}
+                </ul>
+              </div>
+            )}
+            {analysis.weaknesses?.length > 0 && (
+              <div className="p-5 bg-rose-50/50 border border-rose-100 rounded-2xl">
+                <h4 className="text-sm font-bold text-rose-800 mb-3 flex items-center gap-2"><ShieldAlert size={16} /> Weaknesses & Gaps</h4>
+                <ul className="space-y-2">
+                  {analysis.weaknesses.map((w, i) => <li key={i} className="text-sm text-slate-700 flex items-start gap-2">• <span>{w}</span></li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {analysis.opportunities?.length > 0 && (
+            <div className="p-5 bg-blue-50/50 border border-blue-100 rounded-2xl">
+              <h4 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2"><TrendingUp size={16} /> Market Opportunities</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {analysis.opportunities.map((o, i) => (
+                  <div key={i} className="p-3 bg-white rounded-xl border border-blue-100 text-sm text-slate-700">{o}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {analysis.recommendations?.length > 0 && (
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 mb-3">Strategic Recommendations</h4>
               <div className="space-y-2">
-                {analysis.topPatterns.map((p, i) => (
-                  <div key={i} className="text-sm p-2 bg-slate-50 border border-app-border rounded-lg">
-                    <span className="text-slate-900">{p.pattern}</span>
-                    {p.evidence && <span className="text-slate-500 ml-2">({p.evidence})</span>}
+                {analysis.recommendations.map((rec, i) => (
+                  <div key={i} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium">
+                    {typeof rec === 'string' ? rec : rec.recommendation || JSON.stringify(rec)}
                   </div>
                 ))}
               </div>
@@ -225,27 +310,24 @@ export default function CompetitorDetail() {
         </div>
       )}
 
-      {competitor.notes && (
-        <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-2">Notes</h2>
-          <p className="text-slate-600 text-sm">{competitor.notes}</p>
-        </div>
-      )}
-
+      {/* Analyzed Posts Feed */}
       {posts.length > 0 && (
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Analyzed Posts</h2>
+        <div className="glass-card p-6 md:p-8">
+          <h2 className="text-xl font-bold text-slate-900 mb-6">Collected Posts Feed ({posts.length})</h2>
           <div className="space-y-4">
             {posts.map(post => (
-              <div key={post._id} className="border border-app-border rounded-xl p-4 bg-slate-50">
-                <p className="text-slate-700 text-sm mb-3">{(post.caption || '').substring(0, 200)}{post.caption?.length > 200 ? '...' : ''}</p>
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
-                  <span className="flex items-center gap-1"><Heart size={12} /> {post.likes} Likes</span>
-                  <span className="flex items-center gap-1"><MessageCircle size={12} /> {post.comments} Comments</span>
-                  <span className="flex items-center gap-1"><Share2 size={12} /> {post.shares} Shares</span>
-                  <span className="flex items-center gap-1 text-violet-600 font-medium"><TrendingUp size={12} /> {post.engagementRate}% ER</span>
-                  {post.contentType && <span className="px-2 py-0.5 rounded-md bg-white border border-app-border text-slate-600">{post.contentType}</span>}
-                  {post.contentCategory && <span className="px-2 py-0.5 rounded-md bg-white border border-app-border text-slate-600 capitalize">{post.contentCategory.replace(/_/g, ' ')}</span>}
+              <div key={post._id} className="border border-slate-200 rounded-2xl p-5 bg-white shadow-sm hover:shadow-md transition-all">
+                <p className="text-slate-800 text-sm mb-4 leading-relaxed">{post.caption || 'No caption provided.'}</p>
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 text-xs text-slate-500">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1 font-semibold text-slate-700"><Heart size={14} className="text-rose-500" /> {post.likes.toLocaleString()} Likes</span>
+                    <span className="flex items-center gap-1 font-semibold text-slate-700"><MessageCircle size={14} className="text-blue-500" /> {post.comments.toLocaleString()} Comments</span>
+                    <span className="flex items-center gap-1 font-semibold text-violet-600"><TrendingUp size={14} /> {post.engagementRate}% ER</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 uppercase font-medium">{post.platform}</span>
+                    {post.postUrl && <a href={post.postUrl} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:underline flex items-center gap-1">View <ExternalLink size={12} /></a>}
+                  </div>
                 </div>
               </div>
             ))}
@@ -255,8 +337,8 @@ export default function CompetitorDetail() {
 
       {posts.length === 0 && !analysis && (
         <div className="glass-card p-12 text-center text-slate-500">
-          <p>No posts or analysis data yet for this competitor.</p>
-          <p className="text-sm mt-2">Run an AI analysis to get started, or add post data manually.</p>
+          <p className="text-base font-medium">No posts or intelligence analysis available yet.</p>
+          <p className="text-sm mt-1 text-slate-400">Click "Fetch Real Data" to collect posts via Apify or "Run AI Analysis" to generate insights.</p>
         </div>
       )}
     </div>
