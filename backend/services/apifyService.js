@@ -1,128 +1,96 @@
+import { ApifyClient } from 'apify-client';
 import axios from 'axios';
 
-const APIFY_API = 'https://api.apify.com/v2';
-const POLL_INTERVAL = 4000;
-const MAX_POLLS = 40;
-
-const INSTAGRAM_ACTOR = 'clockworks/free-instagram-profile-scraper';
-
-function hasApifyToken() {
-  return process.env.APIFY_API_TOKEN && process.env.APIFY_API_TOKEN !== 'your_apify_token_here';
+function getApifyClient() {
+  const token = process.env.APIFY_API_TOKEN;
+  if (!token || token === 'your_apify_token_here') {
+    throw new Error('APIFY_API_TOKEN is not configured in backend environment variables.');
+  }
+  return new ApifyClient({ token });
 }
 
-function extractUsername(input) {
+function normalizeProfileUrl(input) {
   if (!input) return null;
   const trimmed = input.trim().replace(/\/+$/, '');
-  const match = trimmed.match(/(?:instagram\.com\/)([\w.\-]+)/i);
-  if (match) return match[1].replace(/\?.*$/, '');
-  return trimmed.replace(/^@/, '');
-}
-
-async function startActorRun(actorId, input) {
-  const { data } = await axios.post(
-    `${APIFY_API}/acts/${actorId}/runs`,
-    input,
-    { params: { token: process.env.APIFY_API_TOKEN } }
-  );
-  return data.data.id;
-}
-
-async function waitForRun(runId) {
-  for (let i = 0; i < MAX_POLLS; i++) {
-    await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
-    const { data } = await axios.get(
-      `${APIFY_API}/actor-runs/${runId}`,
-      { params: { token: process.env.APIFY_API_TOKEN } }
-    );
-    const run = data.data;
-    if (run.status === 'SUCCEEDED') return run;
-    if (['FAILED', 'ABORTED', 'TIMED_OUT'].includes(run.status)) {
-      const reason = run.stats?.lastActorRunError?.message || run.status;
-      throw new Error(`Apify run ${run.status}: ${reason}`);
-    }
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed.replace(/\?.*$/, '');
   }
-  throw new Error('Apify run timed out while polling');
+  const clean = trimmed.replace(/^@/, '');
+  return `https://www.instagram.com/${clean}/`;
 }
 
-async function fetchRunItems(runId) {
-  const { data } = await axios.get(
-    `${APIFY_API}/actor-runs/${runId}/dataset/items`,
-    { params: { token: process.env.APIFY_API_TOKEN } }
-  );
-  return Array.isArray(data) ? data : [];
-}
-
-async function runActorAndGetItems(actorId, input) {
-  const runId = await startActorRun(actorId, input);
-  await waitForRun(runId);
-  return fetchRunItems(runId);
-}
-
-export async function fetchInstagramData(username, resultsLimit = 15) {
-  if (!hasApifyToken()) {
-    return { unavailable: true, reason: 'No Apify API token configured. Add APIFY_API_TOKEN to .env for real competitor data.', status: 'Authentication Required' };
-  }
-
-  const clean = extractUsername(username);
-  if (!clean) {
-    return { unavailable: true, reason: 'No valid Instagram username provided.', status: 'Failed' };
-  }
-
+export async function fetchInstagramData(usernameOrUrl, resultsLimit = 15) {
   try {
-    const items = await runActorAndGetItems(INSTAGRAM_ACTOR, {
-      usernames: [clean],
+    const client = getApifyClient();
+    const profileUrl = normalizeProfileUrl(usernameOrUrl);
+    if (!profileUrl) {
+      return { unavailable: true, reason: 'No valid Instagram profile URL or username provided.', status: 'Failed' };
+    }
+
+    // 1. Fetch posts using official apify/instagram-scraper
+    const postsRun = await client.actor('apify/instagram-scraper').call({
+      directUrls: [profileUrl],
+      resultsType: 'posts',
       resultsLimit
     });
+    const { items: postItems } = await client.dataset(postsRun.defaultDatasetId).listItems();
 
-    if (!items.length) {
-      return { unavailable: true, reason: 'Apify returned no data for this profile.', status: 'Restricted' };
+    // 2. Fetch profile details
+    let profileItem = {};
+    try {
+      const detailsRun = await client.actor('apify/instagram-scraper').call({
+        directUrls: [profileUrl],
+        resultsType: 'details',
+        resultsLimit: 1
+      });
+      const { items: detailItems } = await client.dataset(detailsRun.defaultDatasetId).listItems();
+      profileItem = detailItems[0] || {};
+    } catch (err) {
+      console.warn('[Apify] Could not fetch profile details, using defaults');
     }
-
-    const profileItem = items.find(i => i.followersCount !== undefined) || {};
-    const posts = items.filter(i => i.caption !== undefined || i.shortCode !== undefined);
 
     const followers = Number(profileItem.followersCount || 0);
     const profile = {
       followers,
       following: Number(profileItem.followsCount || 0),
-      postCount: Number(profileItem.postsCount || posts.length || 0),
-      bio: profileItem.biography || profileItem.bio || '',
-      profileUrl: profileItem.url || `https://www.instagram.com/${clean}/`,
-      isVerified: Boolean(profileItem.isVerified || false),
-      fullName: profileItem.fullName || profileItem.full_name || '',
+      postCount: Number(profileItem.postsCount || postItems.length || 0),
+      bio: profileItem.biography || '',
+      profileUrl: profileItem.url || profileUrl,
+      isVerified: Boolean(profileItem.verified || profileItem.isVerified || false),
+      fullName: profileItem.fullName || '',
       lastUpdated: new Date()
     };
 
-    const mappedPosts = posts.map((p, idx) => {
-      const likes = Number(p.likesCount || 0);
-      const comments = Number(p.commentsCount || 0);
+    const mappedPosts = (postItems || []).map((p, idx) => {
+      const likes = Number(p.likesCount || p.likes || 0);
+      const comments = Number(p.commentsCount || p.comments || 0);
       const views = Number(p.videoViewCount || p.views || 0);
       const engagementRate = followers > 0
         ? Number((((likes + comments) / Math.max(followers, 1)) * 100).toFixed(2))
         : (likes + comments) > 0 ? Math.min(100, likes + comments) : 0;
 
-      const postType = String(p.type || 'image').toLowerCase();
+      const postType = String(p.type || (p.videoUrl ? 'video' : 'image')).toLowerCase();
       return {
         platform: 'instagram',
-        caption: p.caption || '',
+        caption: p.caption || p.text || '',
         likes,
         comments,
         shares: 0,
         views,
         engagementRate,
-        postUrl: p.url || `https://www.instagram.com/p/${p.shortCode || idx}/`,
-        imageUrl: p.imageUrl || p.displayUrl || p.image_url || '',
-        videoUrl: p.videoUrl || p.video_url || '',
+        postUrl: p.url || profileUrl,
+        imageUrl: p.displayUrl || p.imageUrl || p.thumbnailUrl || '',
+        videoUrl: p.videoUrl || '',
         postDate: p.timestamp ? new Date(p.timestamp) : new Date(),
-        contentType: ['video', 'reel'].includes(postType) ? 'reel' : postType === 'carousel' ? 'carousel' : 'image',
+        contentType: ['video', 'reel'].includes(postType) || p.videoUrl ? 'reel' : postType === 'carousel' || p.childPosts?.length ? 'carousel' : 'image',
         contentCategory: 'unknown',
-        hashtags: (p.caption || '').match(/#[\w\u0600-\u06FF]+/gi)?.map(h => h) || [],
+        hashtags: p.hashtags || (p.caption || '').match(/#[\w\u0600-\u06FF]+/gi) || [],
         externalPostId: p.id || p.shortCode || String(idx),
         dataSource: 'Apify'
       };
     });
 
-    return { profile, posts: mappedPosts, username: clean, status: 'Completed' };
+    return { profile, posts: mappedPosts, status: 'Completed' };
   } catch (error) {
     console.error('[Apify] Instagram fetch error:', error.message);
     return {
@@ -141,11 +109,10 @@ export async function fetchWebsiteData(websiteUrl) {
     const targetUrl = websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`;
     const { data } = await axios.get(targetUrl, { timeout: 10000, headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
     
-    // Extract title and meta description using regex
     const titleMatch = data.match(/<title[^>]*>([^<]+)<\/title>/i);
     const descMatch = data.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i) || data.match(/<meta\s+content=["']([^"']+)["']\s+name=["']description["']/i);
 
-    const title = titleMatch ? titleMatch.text || titleMatch[1].trim() : targetUrl;
+    const title = titleMatch ? titleMatch[1].trim() : targetUrl;
     const description = descMatch ? descMatch[1].trim() : '';
 
     return {
@@ -179,5 +146,3 @@ export async function fetchWebsiteData(websiteUrl) {
     };
   }
 }
-
-export { extractUsername, hasApifyToken };
