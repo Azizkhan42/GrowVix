@@ -20,6 +20,7 @@ import {
   Star,
   Building2
 } from 'lucide-react';
+import { PLANS } from '../../data/plans';
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(null);
@@ -423,83 +424,47 @@ export default function Home() {
             <p className="text-slate-600">Choose the perfect plan to elevate your marketing strategy.</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Free Plan */}
-            <div className="rounded-2xl border border-app-border bg-white p-8 shadow-soft flex flex-col justify-between">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">Free</p>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-extrabold text-slate-900">$0</span>
-                  <span className="text-sm text-slate-500">/ forever</span>
-                </div>
-                <p className="text-sm text-slate-600 mb-6">Essential tools to get started with AI marketing and business profiles.</p>
-                <ul className="space-y-3 text-sm text-slate-600 mb-8">
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Basic business profile</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Limited AI content generation</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Basic competitor analysis</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Basic marketing calendar</li>
-                </ul>
-              </div>
-              <Link
-                to="/signup"
-                className="w-full rounded-xl border border-slate-200 bg-white py-3 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+            {PLANS.map((plan) => (
+              <div
+                key={plan.id}
+                className={`rounded-2xl bg-white p-6 sm:p-8 shadow-soft flex flex-col h-full relative transition-all duration-300 hover:shadow-lift ${
+                  plan.popular ? 'border-2 border-violet-600 shadow-lift' : 'border border-app-border'
+                }`}
               >
-                Get Started Free
-              </Link>
-            </div>
-
-            {/* Professional Plan */}
-            <div className="rounded-2xl border-2 border-violet-600 bg-white p-8 shadow-lift flex flex-col justify-between relative">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full gradient-brand px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">
-                Most Popular
-              </div>
-              <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-violet-600 mb-2">Professional</p>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-extrabold text-slate-900">$49</span>
-                  <span className="text-sm text-slate-500">/ month</span>
+                {plan.popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full gradient-brand px-3 py-1 text-[11px] sm:text-xs font-bold text-white uppercase tracking-wider">
+                    Most Popular
+                  </div>
+                )}
+                <div className="flex-1">
+                  <p className={`text-sm font-bold uppercase tracking-wider mb-2 ${plan.popular ? 'text-violet-600' : 'text-slate-500'}`}>{plan.name}</p>
+                  <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0 mb-4">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-slate-900">${plan.priceMonthly}</span>
+                    <span className="text-xs sm:text-sm text-slate-500">/ {plan.priceMonthly === 0 ? 'forever' : 'month'}</span>
+                  </div>
+                  <p className="text-sm text-slate-600 mb-6">{plan.description}</p>
+                  <ul className="space-y-3 text-sm text-slate-600 mb-8">
+                    {plan.features.map((feat, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle2 size={16} className="text-violet-600 shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="text-sm text-slate-600 mb-6">Advanced AI capabilities and social publishing for growing businesses.</p>
-                <ul className="space-y-3 text-sm text-slate-600 mb-8">
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Increased AI content generation</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Advanced competitor analysis</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> AI marketing recommendations</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Social media scheduling & publishing</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Marketing analytics & insights</li>
-                </ul>
+                <Link
+                  to="/signup"
+                  className={`w-full rounded-xl py-3 text-center text-sm font-semibold transition ${
+                    plan.popular
+                      ? 'gradient-brand text-white shadow-soft hover:opacity-95'
+                      : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
               </div>
-              <Link
-                to="/signup"
-                className="gradient-brand w-full rounded-xl py-3 text-center text-sm font-semibold text-white shadow-soft transition hover:opacity-95"
-              >
-                Start Professional Trial
-              </Link>
-            </div>
-
-            {/* Business Plan */}
-            <div className="rounded-2xl border border-app-border bg-white p-8 shadow-soft flex flex-col justify-between">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">Business</p>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-extrabold text-slate-900">$129</span>
-                  <span className="text-sm text-slate-500">/ month</span>
-                </div>
-                <p className="text-sm text-slate-600 mb-6">Multi-business profiles and team collaboration for agencies and enterprises.</p>
-                <ul className="space-y-3 text-sm text-slate-600 mb-8">
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Multiple business profiles</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Advanced marketing insights</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Team collaboration tools</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Higher usage limits & priority API</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-violet-600" /> Advanced reporting</li>
-                </ul>
-              </div>
-              <Link
-                to="/signup"
-                className="w-full rounded-xl border border-slate-200 bg-white py-3 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                Choose Business
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
       </section>

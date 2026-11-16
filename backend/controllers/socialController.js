@@ -105,18 +105,17 @@ export const getAuthUrl = async (req, res) => {
 
       const scopes = platform === 'facebook'
         ? [
+            // "Manage Pages" use case — exactly the permissions needed
+            // for basic Facebook Page publishing.
             'pages_show_list',
             'pages_read_engagement',
-            'pages_manage_posts',
-            'pages_manage_metadata',
-            'pages_read_user_content'
+            'pages_manage_posts'
           ]
         : [
+            // Instagram publishing requires the Instagram Login scopes.
             'pages_show_list',
             'pages_read_engagement',
             'pages_manage_posts',
-            'pages_manage_metadata',
-            'pages_read_user_content',
             'instagram_basic',
             'instagram_content_publish'
           ];
