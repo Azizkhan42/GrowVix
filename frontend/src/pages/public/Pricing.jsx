@@ -23,8 +23,8 @@ export default function Pricing() {
     },
     {
       name: 'Professional',
-      priceMonthly: 49,
-      priceAnnual: 39,
+      priceMonthly: 15,
+      priceAnnual: 12,
       description: 'Advanced AI capabilities and social publishing for growing businesses.',
       features: [
         'Increased AI content generation',
@@ -39,8 +39,8 @@ export default function Pricing() {
     },
     {
       name: 'Business',
-      priceMonthly: 129,
-      priceAnnual: 99,
+      priceMonthly: 20,
+      priceAnnual: 15,
       description: 'Multi-business profiles and team collaboration for agencies and enterprises.',
       features: [
         'Multiple business profiles',
