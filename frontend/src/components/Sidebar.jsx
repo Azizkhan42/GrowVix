@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -57,10 +57,29 @@ export function UpgradeCard() {
 
 export default function Sidebar({ open, onClose }) {
   const location = useLocation();
+  const onCloseRef = useRef(onClose);
 
   useEffect(() => {
-    onClose?.();
-  }, [location.pathname, onClose]);
+    onCloseRef.current = onClose;
+  });
+
+  // Close the mobile drawer only when the route actually changes.
+  // Depending on `onClose` here would re-run the effect on every render
+  // (the parent passes a new function each render) and immediately close
+  // the drawer the moment it is opened.
+  useEffect(() => {
+    onCloseRef.current?.();
+  }, [location.pathname]);
+
+  // Lock body scroll while the mobile drawer is open.
+  useEffect(() => {
+    if (!open) return undefined;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [open]);
 
   return (
     <>

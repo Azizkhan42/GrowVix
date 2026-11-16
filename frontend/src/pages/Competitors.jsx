@@ -158,7 +158,7 @@ export default function Competitors() {
         await api.delete(`/competitors/${id}`);
         showToast('Competitor deleted successfully');
         fetchCompetitors();
-      } catch (err) {
+      } catch {
         showToast('Failed to delete competitor', 'error');
       }
     }
@@ -170,7 +170,7 @@ export default function Competitors() {
       await api.post(`/competitors/analyze/${id}`);
       showToast('AI analysis completed successfully');
       fetchCompetitors();
-    } catch (err) {
+    } catch {
       showToast('Failed to run AI analysis', 'error');
     } finally {
       setAnalyzing(null);
@@ -180,7 +180,7 @@ export default function Competitors() {
   return (
     <div className="space-y-6 pb-20">
       {toast && (
-        <div className={`fixed top-5 right-5 z-50 p-4 rounded-xl shadow-lg border flex items-center gap-3 text-sm animate-bounce ${toast.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'}`}>
+        <div className={`fixed top-5 left-4 right-4 sm:left-auto sm:right-5 z-50 p-4 rounded-xl shadow-lg border flex items-center gap-3 text-sm animate-bounce ${toast.type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'}`}>
           {toast.type === 'error' ? <ShieldAlert size={18} /> : <CheckCircle2 size={18} />}
           <span>{toast.message}</span>
         </div>
