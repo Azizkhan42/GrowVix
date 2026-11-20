@@ -1,5 +1,5 @@
 import { calculateDigitalScore, generateCompetitorComparison, performGapAnalysis } from '../services/scoreService.js';
-import { generateRecommendations, generateGapAnalysis } from '../services/aiService.js';
+import { generateRecommendations, generateGapAnalysis, isGeminiConfigured } from '../services/aiService.js';
 import Recommendation from '../models/Recommendation.js';
 import DigitalScore from '../models/DigitalScore.js';
 import Competitor from '../models/Competitor.js';
@@ -29,7 +29,7 @@ export const getGapAnalysis = async (req, res) => {
   try {
     const gapData = await performGapAnalysis(req.user.id);
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         const aiGaps = await generateGapAnalysis(gapData.myData, gapData.competitorData);
         if (aiGaps) {
@@ -75,7 +75,7 @@ export const getRecommendations = async (req, res) => {
 
     let recommendationData = null;
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         recommendationData = await generateRecommendations({
           digitalScore: { overall: score.overall, dimensions: score.dimensions },
@@ -150,7 +150,7 @@ export const refreshRecommendations = async (req, res) => {
 
     let recommendationData = null;
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         recommendationData = await generateRecommendations({
           digitalScore: { overall: score.overall, dimensions: score.dimensions },

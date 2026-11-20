@@ -1,7 +1,7 @@
 import AIInsight from '../models/AIInsight.js';
 import Post from '../models/Post.js';
 import Competitor from '../models/Competitor.js';
-import { analyzePostWithAI } from '../services/aiService.js';
+import { analyzePostWithAI, isGeminiConfigured } from '../services/aiService.js';
 
 export const analyzePost = async (req, res) => {
   try {
@@ -26,14 +26,14 @@ export const analyzePost = async (req, res) => {
 
     let analysisResult = null;
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         const aiAnalysis = await analyzePostWithAI(post);
         if (aiAnalysis) {
           analysisResult = aiAnalysis;
         }
       } catch (err) {
-        console.error('[AI Analysis] OpenAI error:', err.message);
+        console.error('[AI Analysis] Gemini error:', err.message);
       }
     }
 

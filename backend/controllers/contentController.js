@@ -2,7 +2,7 @@ import Content from '../models/Content.js';
 import Competitor from '../models/Competitor.js';
 import Post from '../models/Post.js';
 import BusinessProfile from '../models/BusinessProfile.js';
-import { generateContentWithAI, generateContentIdeas, generateContentCalendar } from '../services/aiService.js';
+import { generateContentWithAI, generateContentIdeas, generateContentCalendar, isGeminiConfigured } from '../services/aiService.js';
 
 function generateSmartContent(topic, platform, tone, audience, objective) {
   const toneStyles = {
@@ -120,7 +120,7 @@ function generateSmartContent(topic, platform, tone, audience, objective) {
       emotionalAppeal: 55 + Math.floor(Math.random() * 25),
       cta: 60 + Math.floor(Math.random() * 20),
       audienceRelevance: 65 + Math.floor(Math.random() * 25),
-      explanation: 'Content generated with smart fallback. Enable OpenAI API for AI-powered content with higher engagement scores.'
+      explanation: 'Content generated with smart fallback. Configure Gemini API for AI-powered content with higher engagement scores.'
     }
   };
 }
@@ -161,7 +161,7 @@ export const generateContent = async (req, res) => {
       console.error('[Content] Business profile error:', err.message);
     }
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         const aiResult = await generateContentWithAI({
           topic,
@@ -266,7 +266,7 @@ export const getContentIdeas = async (req, res) => {
 
     let ideas = null;
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         const aiResult = await generateContentIdeas({
           industry: businessProfile?.industry || 'business',
@@ -414,7 +414,7 @@ export const getContentCalendar = async (req, res) => {
 
     let calendar = null;
 
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    if (isGeminiConfigured()) {
       try {
         const aiResult = await generateContentCalendar({
           businessProfile,

@@ -9,7 +9,7 @@
 - Ensure strict user data isolation across all Mongoose queries.
 
 ## Phase 3: External Integration Readiness & Documentation
-- Document required environment keys and third-party developer portal setups (Meta, OpenAI, Apify, MongoDB Atlas).
+- Document required environment keys and third-party developer portal setups (Meta, Gemini (`GEMINI_API_KEY` and optional `GEMINI_MODEL`), Apify, MongoDB Atlas).
 - Ensure graceful degradation when external API keys are missing.
 
 ## Phase 4: Automated Testing & Verification

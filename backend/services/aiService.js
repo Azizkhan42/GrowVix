@@ -1,47 +1,66 @@
 import axios from 'axios';
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
-async function callOpenAI(messages, options = {}) {
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-    return null;
+export function isGeminiConfigured() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  return Boolean(apiKey && apiKey !== 'your_gemini_api_key_here');
+}
+
+export async function callGemini(messages, options = {}) {
+  if (!isGeminiConfigured()) return null;
+
+  const model = options.model || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const systemInstruction = messages
+    .filter(message => message.role === 'system')
+    .map(message => message.content)
+    .join('\n');
+  const contents = messages
+    .filter(message => message.role !== 'system')
+    .map(message => ({
+      role: message.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: message.content }]
+    }));
+  const request = {
+    contents,
+    generationConfig: {
+      temperature: options.temperature ?? 0.7,
+      maxOutputTokens: options.max_tokens ?? 2000
+    }
+  };
+
+  if (systemInstruction) {
+    request.systemInstruction = { parts: [{ text: systemInstruction }] };
   }
 
+  const endpoint = `${GEMINI_API_URL}/${encodeURIComponent(model)}:generateContent`;
+  const requestOptions = {
+    params: { key: process.env.GEMINI_API_KEY },
+    headers: { 'Content-Type': 'application/json' },
+    timeout: options.timeout || 30000
+  };
+
   try {
-    const response = await axios.post(
-      OPENAI_API_URL,
-      {
-        model: options.model || 'gpt-3.5-turbo',
-        messages,
-        temperature: options.temperature || 0.7,
-        max_tokens: options.max_tokens || 2000,
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: options.timeout || 30000
-      }
-    );
-    return response.data.choices[0].message.content;
+    const response = await axios.post(endpoint, request, requestOptions);
+    return response.data.candidates?.[0]?.content?.parts
+      ?.map(part => part.text || '')
+      .join('') || null;
   } catch (error) {
     if (error.response?.status === 429) {
-      console.error('[AI] Rate limited. Retrying in 2s...');
-      await new Promise(r => setTimeout(r, 2000));
+      console.error('[AI] Gemini rate limited. Retrying in 2s...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
       try {
-        const retry = await axios.post(
-          OPENAI_API_URL,
-          { model: options.model || 'gpt-3.5-turbo', messages, temperature: options.temperature || 0.7, max_tokens: options.max_tokens || 2000 },
-          { headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 30000 }
-        );
-        return retry.data.choices[0].message.content;
-      } catch (retryErr) {
-        console.error('[AI] Retry failed:', retryErr.message);
+        const retry = await axios.post(endpoint, request, requestOptions);
+        return retry.data.candidates?.[0]?.content?.parts
+          ?.map(part => part.text || '')
+          .join('') || null;
+      } catch (retryError) {
+        console.error('[AI] Gemini retry failed:', retryError.message);
         return null;
       }
     }
-    console.error('[AI] OpenAI error:', error.message);
+
+    console.error('[AI] Gemini error:', error.message);
     return null;
   }
 }
@@ -95,7 +114,7 @@ Provide a JSON analysis with:
 
 Return ONLY valid JSON. No markdown.`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are a marketing intelligence analyst. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.5 });
@@ -176,7 +195,7 @@ Return ONLY valid JSON:
   }
 }`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are an expert social media content strategist. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.85, max_tokens: 2500 });
@@ -236,7 +255,7 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are a content strategy expert. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.9, max_tokens: 3000 });
@@ -296,7 +315,7 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are a social media content strategist. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.8, max_tokens: 3000 });
@@ -351,7 +370,7 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are a digital marketing strategist. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.6, max_tokens: 3000 });
@@ -389,7 +408,7 @@ Provide detailed analysis as JSON:
   "recommendation": "<what to learn from this post>"
 }`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are a social media analytics expert. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.5 });
@@ -441,7 +460,7 @@ Return ONLY valid JSON:
   "executiveSummary": "<overall competitive position summary>"
 }`;
 
-  const result = await callOpenAI([
+  const result = await callGemini([
     { role: 'system', content: 'You are a competitive strategy analyst. Return only valid JSON.' },
     { role: 'user', content: prompt }
   ], { temperature: 0.5 });
@@ -455,5 +474,3 @@ Return ONLY valid JSON:
   }
   return null;
 }
-
-export { callOpenAI };
