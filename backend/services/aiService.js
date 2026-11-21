@@ -52,7 +52,8 @@ export async function callGemini(messages, options = {}) {
     contents,
     generationConfig: {
       temperature: options.temperature ?? 0.7,
-      maxOutputTokens: options.max_tokens ?? 4000
+      maxOutputTokens: options.max_tokens ?? 4000,
+      thinkingConfig: { thinkingBudget: 0 }
     }
   };
 
@@ -161,72 +162,74 @@ export async function generateContentWithAI(options) {
   const { topic, platform, tone, audience, objective, competitorInsights, businessProfile } = options;
 
   const platformStrategies = {
-    instagram: 'Focus on visual hooks, emojis, storytelling, and 10 relevant hashtags. Keep captions engaging and under 500 chars. Suggest carousel or reel format when appropriate.',
-    linkedin: 'Professional tone, thought leadership, line breaks for readability, 3-5 industry hashtags. Use data-driven insights and personal experiences.',
-    twitter: 'Concise, punchy, under 280 chars. Strong hook, no fluff. 2-3 hashtags. Use threads for complex topics.',
-    facebook: 'Conversational, community-focused, ask questions to drive comments. Use storytelling. 2-3 hashtags max.'
+    instagram: 'Visual-first hook, emojis, short scannable lines, 8-12 relevant hashtags. Suggest a reel or carousel visual when it fits.',
+    linkedin: 'Professional thought-leadership tone, line breaks for readability, 3-5 industry hashtags, no emoji spam.',
+    twitter: 'Under 280 characters, punchy hook, no fluff, 2-3 hashtags.',
+    facebook: 'Conversational and community-focused, emoji sparingly, a question that invites comments, 2-3 hashtags.',
+    tiktok: 'Very short, spoken-style hook for a video caption, 1-2 lines, 3-5 trending-style hashtags.'
   };
 
-  const competitorContext = competitorInsights 
-    ? `\nCompetitor patterns to consider (do NOT copy, only use for strategic inspiration):\n${JSON.stringify(competitorInsights, null, 2)}`
+  const competitorContext = competitorInsights
+    ? `\nCompetitor patterns to learn from (do NOT copy, and do NOT let these override the topic above):\n${JSON.stringify(competitorInsights, null, 2)}`
     : '';
 
-  const businessContext = businessProfile 
-    ? `\nBusiness: ${businessProfile.businessName || 'N/A'}\nIndustry: ${businessProfile.industry || 'N/A'}\nTarget: ${businessProfile.targetAudience || 'General audience'}\nBrand Tone: ${businessProfile.brandTone || 'professional'}`
+  const businessContext = businessProfile
+    ? `\nBusiness background (supporting detail only, never a replacement for the topic):\nBusiness name: ${businessProfile.businessName || 'N/A'}\nIndustry: ${businessProfile.industry || 'N/A'}\nTarget audience: ${businessProfile.targetAudience || 'N/A'}\nBrand tone: ${businessProfile.brandTone || 'N/A'}`
     : '';
 
-  const prompt = `Generate 3 variations of a ${platform} post.
+  const prompt = `Write 3 distinct variations of ONE social media post.
 
-Topic: ${topic}
+=== PRIMARY CONTEXT (highest priority) ===
+User request / topic: """${topic}"""
+
+=== POST SETTINGS ===
 Platform: ${platform}
 Tone: ${tone || 'Professional'}
-Audience: ${audience || 'General'}
-Objective: ${objective || 'engagement'}
+Target audience: ${audience || 'General audience'}
+Marketing objective: ${objective || 'engagement'}
 ${platformStrategies[platform] || ''}
 ${competitorContext}
 ${businessContext}
 
-For EACH variation, provide:
-- A unique angle/hook
-- The caption text
-- Relevant hashtags (platform appropriate)
-- Style label (e.g. "Professional", "Storytelling", "Educational", "Emotional", "Viral Short-form")
+=== NON-NEGOTIABLE RULES ===
+1. The user request above is the single source of truth. Every caption must be about exactly that product, service, business or subject.
+2. First work out what the user is actually asking for (for example: sell a product, teach something, build awareness, drive engagement), then write content that serves that intent.
+3. NEVER substitute a different, generic or unrelated topic. If the user wants to sell mobile phones, the post is about mobile phones - not students, textbooks, apps, or education.
+4. Do not invent a different industry, product or audience than the one in the user request.
+5. Match the objective: sales/leads -> persuasive selling copy with a strong call to action; awareness -> brand-focused storytelling; engagement -> questions and conversation starters; education -> informative and actionable.
+6. Write specific, concrete copy. No filler that could apply to any business.
+7. Respect the platform style and length guidance above.
+8. Each variation needs a genuinely different angle, not a reworded duplicate.
+9. Include relevant hashtags that relate to the user's topic.
+10. Also write an imagePrompt: a detailed text-to-image prompt that visually depicts the exact product, service or subject from the user request, in a clean professional advertising style. It must never depict anything unrelated to the topic.
 
-Also provide an engagement score estimate (0-100) with breakdown:
-- hook (0-100)
-- value (0-100)
-- clarity (0-100)
-- emotionalAppeal (0-100)
-- cta (0-100)
-- audienceRelevance (0-100)
-- explanation (string explaining the score)
-
-Return ONLY valid JSON:
+Return ONLY valid JSON, no markdown, no commentary:
 {
   "variations": [
     {
-      "label": "<style label>",
-      "caption": "<post text>",
+      "label": "<short style label>",
+      "caption": "<the post text>",
       "hashtags": ["tag1", "tag2"],
-      "style": "<style>"
+      "style": "<style label>",
+      "imagePrompt": "<detailed image prompt matching this caption and the user topic>"
     }
   ],
   "engagementScore": {
-    "overall": <number>,
-    "hook": <number>,
-    "value": <number>,
-    "clarity": <number>,
-    "emotionalAppeal": <number>,
-    "cta": <number>,
-    "audienceRelevance": <number>,
-    "explanation": "<explanation>"
+    "overall": <0-100>,
+    "hook": <0-100>,
+    "value": <0-100>,
+    "clarity": <0-100>,
+    "emotionalAppeal": <0-100>,
+    "cta": <0-100>,
+    "audienceRelevance": <0-100>,
+    "explanation": "<one or two sentences>"
   }
 }`;
 
   const result = await callGemini([
-    { role: 'system', content: 'You are an expert social media content strategist. Return only valid JSON.' },
+    { role: 'system', content: 'You are an expert social media copywriter. You follow the user topic exactly and never drift to an unrelated subject. You return only valid JSON.' },
     { role: 'user', content: prompt }
-  ], { temperature: 0.85, max_tokens: 2500 });
+  ], { temperature: 0.85, max_tokens: 3000 });
 
   const parsed = parseJsonResponse(result);
   if (parsed) return parsed;
@@ -236,7 +239,6 @@ Return ONLY valid JSON:
   }
   return null;
 }
-
 export async function generateContentIdeas(options) {
   const { industry, competitors, goals, platform } = options;
 

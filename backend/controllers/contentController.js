@@ -125,6 +125,22 @@ function generateSmartContent(topic, platform, tone, audience, objective) {
   };
 }
 
+function normalizeHashtags(hashtags) {
+  if (!Array.isArray(hashtags)) return [];
+  return [...new Set(
+    hashtags
+      .map(tag => String(tag).trim().replace(/^#+/, '').replace(/[^a-zA-Z0-9_]/g, ''))
+      .filter(Boolean)
+      .map(tag => `#${tag}`)
+  )];
+}
+function buildImagePrompt(aiImagePrompt, topic, platform) {
+  const subject = (aiImagePrompt || topic || '').trim();
+  const framing = platform === 'tiktok' || platform === 'instagram'
+    ? 'vertical social media composition'
+    : 'square social media composition';
+  return `${subject}. Advertising visual for a ${platform} post. ${framing}, professional commercial photography, attractive lighting, clean background, no text overlays, no watermark.`;
+}
 export const generateContent = async (req, res) => {
   try {
     const { topic, audience, tone, platform, includeImage, objective } = req.body;
@@ -185,20 +201,26 @@ export const generateContent = async (req, res) => {
       generatedResult = generateSmartContent(topic, platform, tone || 'Professional', audience, objective);
     }
 
+    generatedResult.variations = (generatedResult.variations || []).map(variation => ({
+      ...variation,
+      hashtags: normalizeHashtags(variation.hashtags),
+      imagePrompt: variation.imagePrompt || buildImagePrompt(null, topic, platform)
+    }));
+
+    const selectedVariation = generatedResult.variations?.[0] || { caption: generatedResult.caption || '', hashtags: generatedResult.hashtags || [] };
+
     let imageUrl = '';
     if (includeImage) {
       const seed = Math.floor(Math.random() * 1000000);
-      const imagePrompt = encodeURIComponent(`${topic}, ${platform} post, high quality, professional photography`);
+      const imagePrompt = encodeURIComponent(buildImagePrompt(selectedVariation.imagePrompt, topic, platform));
       imageUrl = `https://image.pollinations.ai/prompt/${imagePrompt}?width=1080&height=1080&nologo=true&seed=${seed}`;
     }
-
-    const selectedVariation = generatedResult.variations?.[0] || { caption: generatedResult.caption || '', hashtags: generatedResult.hashtags || [] };
 
     const newContent = await Content.create({
       userId: req.user.id,
       platform,
       caption: selectedVariation.caption,
-      hashtags: selectedVariation.hashtags || generatedResult.hashtags || [],
+      hashtags: normalizeHashtags(selectedVariation.hashtags?.length ? selectedVariation.hashtags : generatedResult.hashtags),
       imageUrl,
       contentType: 'post',
       objective: objective || 'engagement',
