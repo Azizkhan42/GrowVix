@@ -9,6 +9,14 @@ function getApifyClient() {
   return new ApifyClient({ token });
 }
 
+export function extractUsername(input) {
+  if (!input) return '';
+  const trimmed = String(input).trim();
+  const withoutQuery = trimmed.split(/[?#]/)[0].replace(/\/+$/, '');
+  const parts = withoutQuery.split('/').filter(Boolean);
+  const username = parts.length > 0 ? parts[parts.length - 1] : '';
+  return username.replace(/^@/, '');
+}
 function normalizeProfileUrl(input) {
   if (!input) return null;
   const trimmed = input.trim().replace(/\/+$/, '');

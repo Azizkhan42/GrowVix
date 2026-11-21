@@ -17,7 +17,7 @@ const competitorAnalysisSchema = new mongoose.Schema({
   supportingEvidence: { type: mongoose.Schema.Types.Mixed },
   data: { type: mongoose.Schema.Types.Mixed },
   aiSummary: { type: String, default: '' },
-  modelVersion: { type: String, default: 'gemini-2.5-flash' },
+  modelVersion: { type: String, default: 'gemini-3.6-flash' },
   calculatedAt: { type: Date, default: Date.now }
 });
 

@@ -6,11 +6,38 @@ export function isGeminiConfigured() {
   const apiKey = process.env.GEMINI_API_KEY;
   return Boolean(apiKey && apiKey !== 'your_gemini_api_key_here');
 }
+function parseJsonResponse(text) {
+  if (typeof text !== 'string' || !text.trim()) return null;
+
+  const withoutFence = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/, '')
+    .trim();
+
+  const candidates = [withoutFence];
+  const firstObject = withoutFence.indexOf('{');
+  const firstArray = withoutFence.indexOf('[');
+  const starts = [firstObject, firstArray].filter(index => index >= 0);
+  if (starts.length > 0) {
+    const start = Math.min(...starts);
+    const end = Math.max(withoutFence.lastIndexOf('}'), withoutFence.lastIndexOf(']'));
+    if (end > start) candidates.push(withoutFence.slice(start, end + 1));
+  }
+
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate);
+    } catch {}
+  }
+  return null;
+}
 
 export async function callGemini(messages, options = {}) {
   if (!isGeminiConfigured()) return null;
 
-  const model = options.model || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const configuredModel = options.model || process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+  const model = configuredModel === 'gemini-2.5-flash' ? 'gemini-3.6-flash' : configuredModel;
   const systemInstruction = messages
     .filter(message => message.role === 'system')
     .map(message => message.content)
@@ -25,7 +52,7 @@ export async function callGemini(messages, options = {}) {
     contents,
     generationConfig: {
       temperature: options.temperature ?? 0.7,
-      maxOutputTokens: options.max_tokens ?? 2000
+      maxOutputTokens: options.max_tokens ?? 4000
     }
   };
 
@@ -37,7 +64,7 @@ export async function callGemini(messages, options = {}) {
   const requestOptions = {
     params: { key: process.env.GEMINI_API_KEY },
     headers: { 'Content-Type': 'application/json' },
-    timeout: options.timeout || 30000
+    timeout: options.timeout || 90000
   };
 
   try {
@@ -55,12 +82,14 @@ export async function callGemini(messages, options = {}) {
           ?.map(part => part.text || '')
           .join('') || null;
       } catch (retryError) {
-        console.error('[AI] Gemini retry failed:', retryError.message);
+        const retryDetails = retryError.response?.data?.error?.message || retryError.message;
+        console.error('[AI] Gemini retry failed:', retryDetails);
         return null;
       }
     }
 
-    console.error('[AI] Gemini error:', error.message);
+    const details = error.response?.data?.error?.message || error.message;
+    console.error('[AI] Gemini error:', details);
     return null;
   }
 }
@@ -119,12 +148,11 @@ Return ONLY valid JSON. No markdown.`;
     { role: 'user', content: prompt }
   ], { temperature: 0.5 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
@@ -200,12 +228,11 @@ Return ONLY valid JSON:
     { role: 'user', content: prompt }
   ], { temperature: 0.85, max_tokens: 2500 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
@@ -260,12 +287,11 @@ Return ONLY valid JSON:
     { role: 'user', content: prompt }
   ], { temperature: 0.9, max_tokens: 3000 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
@@ -320,12 +346,11 @@ Return ONLY valid JSON:
     { role: 'user', content: prompt }
   ], { temperature: 0.8, max_tokens: 3000 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
@@ -375,12 +400,11 @@ Return ONLY valid JSON:
     { role: 'user', content: prompt }
   ], { temperature: 0.6, max_tokens: 3000 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
@@ -413,12 +437,11 @@ Provide detailed analysis as JSON:
     { role: 'user', content: prompt }
   ], { temperature: 0.5 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
@@ -465,12 +488,11 @@ Return ONLY valid JSON:
     { role: 'user', content: prompt }
   ], { temperature: 0.5 });
 
+  const parsed = parseJsonResponse(result);
+  if (parsed) return parsed;
+
   if (result) {
-    try {
-      return JSON.parse(result);
-    } catch {
-      return null;
-    }
+    console.error('[AI] Gemini returned invalid JSON:', result.slice(0, 300));
   }
   return null;
 }
