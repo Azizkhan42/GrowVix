@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 const PLATFORM_META = {
   instagram: { label: 'Instagram', chip: 'bg-pink-50 text-pink-600' },
-  twitter: { label: 'Twitter', chip: 'bg-sky-50 text-sky-600' },
   linkedin: { label: 'LinkedIn', chip: 'bg-blue-50 text-blue-700' },
   facebook: { label: 'Facebook', chip: 'bg-indigo-50 text-indigo-600' },
 };

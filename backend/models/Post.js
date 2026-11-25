@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const postSchema = new mongoose.Schema({
   competitorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Competitor', required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook', 'tiktok', 'youtube', 'website'], required: true },
+  platform: { type: String, enum: ['instagram', 'linkedin', 'facebook', 'tiktok', 'youtube', 'website'], required: true },
   externalPostId: { type: String },
   caption: { type: String },
   likes: { type: Number, default: 0 },

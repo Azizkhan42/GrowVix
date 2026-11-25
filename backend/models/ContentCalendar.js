@@ -5,7 +5,7 @@ const contentCalendarSchema = new mongoose.Schema({
   weekStarting: { type: Date, required: true },
   entries: [{
     day: { type: String, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] },
-    platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook'] },
+    platform: { type: String, enum: ['instagram', 'linkedin', 'facebook'] },
     contentType: { type: String },
     topic: { type: String },
     hook: { type: String },

@@ -30,7 +30,6 @@ const defaultForm = {
   linkedinPage: '',
   tiktokProfile: '',
   youtubeChannel: '',
-  twitterHandle: '',
   logo: '',
   notes: ''
 };
@@ -144,7 +143,6 @@ export default function Competitors() {
       linkedinPage: comp.linkedinPage || '',
       tiktokProfile: comp.tiktokProfile || '',
       youtubeChannel: comp.youtubeChannel || '',
-      twitterHandle: comp.twitterHandle || '',
       logo: comp.logo || '',
       notes: comp.notes || ''
     });
@@ -357,16 +355,6 @@ export default function Competitors() {
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 text-sm focus:outline-none focus:border-violet-500"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">X / Twitter Handle</label>
-                  <input
-                    type="text"
-                    placeholder="@handle"
-                    value={formData.twitterHandle}
-                    onChange={(e) => setFormData({ ...formData, twitterHandle: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 text-sm focus:outline-none focus:border-violet-500"
-                  />
-                </div>
               </div>
             </div>
 
@@ -514,7 +502,6 @@ export default function Competitors() {
                     {comp.instagramProfile && <span className="text-xs px-2 py-0.5 rounded-md bg-pink-50 text-pink-600">Instagram</span>}
                     {comp.linkedinPage && <span className="text-xs px-2 py-0.5 rounded-md bg-blue-50 text-blue-600">LinkedIn</span>}
                     {comp.facebookPage && <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600">Facebook</span>}
-                    {comp.twitterHandle && <span className="text-xs px-2 py-0.5 rounded-md bg-sky-50 text-sky-600">Twitter</span>}
                     {comp.tiktokProfile && <span className="text-xs px-2 py-0.5 rounded-md bg-slate-900 text-white">TikTok</span>}
                     {comp.youtubeChannel && <span className="text-xs px-2 py-0.5 rounded-md bg-red-50 text-red-600">YouTube</span>}
                     {comp.website && <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1"><Globe size={10} />Website</span>}

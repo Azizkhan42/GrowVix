@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const socialAccountSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook'], required: true },
+  platform: { type: String, enum: ['instagram', 'linkedin', 'facebook'], required: true },
   accessToken: { type: String, default: '' },
   userToken: { type: String, default: '' },
   tokenType: { type: String, enum: ['user', 'page', 'none'], default: 'user' },

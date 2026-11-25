@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const contentSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook'], required: true },
+  platform: { type: String, enum: ['instagram', 'linkedin', 'facebook'], required: true },
   caption: { type: String, required: true },
   hashtags: [{ type: String }],
   imageUrl: { type: String },

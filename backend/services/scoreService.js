@@ -81,7 +81,6 @@ function calculateSocialMediaScore(competitors) {
     if (c.instagramProfile) platformsUsed.add('instagram');
     if (c.linkedinPage) platformsUsed.add('linkedin');
     if (c.facebookPage) platformsUsed.add('facebook');
-    if (c.twitterHandle) platformsUsed.add('twitter');
     if (c.platforms?.length) c.platforms.forEach(p => platformsUsed.add(p.platform));
   });
 

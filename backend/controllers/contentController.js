@@ -70,7 +70,6 @@ function generateSmartContent(topic, platform, tone, audience, objective) {
 
   const platformFormats = {
     linkedin: { maxLength: 700, style: 'professional with line breaks', hashtagCount: 5 },
-    twitter: { maxLength: 250, style: 'concise and punchy', hashtagCount: 3 },
     instagram: { maxLength: 500, style: 'engaging with emojis', hashtagCount: 10 },
     facebook: { maxLength: 500, style: 'conversational and community-driven', hashtagCount: 4 },
   };
@@ -86,8 +85,6 @@ function generateSmartContent(topic, platform, tone, audience, objective) {
   let body = '';
   if (platform === 'linkedin') {
     body = `${opener}.\n\n${audienceText}\n\nHere's the reality:\n\n-> ${topic} is evolving faster than most people realize\n-> Early adopters are already seeing massive results\n-> The gap between those who embrace it and those who don't is widening\n\nThe question isn't whether ${topic} matters — it's whether you're ready to act on it.\n\n${closer}`;
-  } else if (platform === 'twitter') {
-    body = `${opener}.\n\n${audienceText}\n\n${closer}`;
   } else if (platform === 'instagram') {
     body = `${opener}\n\n${audienceText}\n\nHere's what I've learned so far:\n\n1. ${topic} is changing the game\n2. The opportunities are massive\n3. Now is the time to start\n\n${closer}`;
   } else {

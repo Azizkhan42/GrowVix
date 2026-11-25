@@ -11,7 +11,7 @@ const businessProfileSchema = new mongoose.Schema({
   brandTone: { type: String, enum: ['professional', 'casual', 'funny', 'inspirational', 'educational', 'authoritative'], default: 'professional' },
   competitors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Competitor' }],
   socialAccounts: [{
-    platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook'] },
+    platform: { type: String, enum: ['instagram', 'linkedin', 'facebook'] },
     username: { type: String },
     followers: { type: Number, default: 0 },
     following: { type: Number, default: 0 },

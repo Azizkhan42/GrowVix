@@ -871,34 +871,6 @@ export const performPublish = async (
 
 
   // ======================================
-  // TWITTER / X PUBLISHING
-  // ======================================
-
-  else if (platform === 'twitter') {
-
-    const tweetRes = await axios.post(
-      'https://api.twitter.com/2/tweets',
-      {
-        text: imageUrl
-          ? `${content}\n\n${imageUrl}`
-          : content
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${account.accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    result.message =
-      `Tweeted successfully (${account.accountName || '@user'})!`;
-
-    result.postId = tweetRes.data.data.id;
-  }
-
-
-  // ======================================
   // INSTAGRAM PUBLISHING
   // ======================================
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import Logo from '../Logo';
-import { Sparkles, Twitter, Linkedin, Facebook, Instagram, Github } from 'lucide-react';
+import { Sparkles, Linkedin, Facebook, Instagram, Github } from 'lucide-react';
 
 export default function PublicFooter() {
   return (
@@ -16,15 +16,6 @@ export default function PublicFooter() {
               GrowVix is your AI-powered marketing management platform. Discover competitors, generate high-converting content, schedule social campaigns, and track performance effortlessly.
             </p>
             <div className="flex items-center gap-3 pt-2">
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition hover:bg-violet-50 hover:border-violet-200 hover:text-violet-600"
-                aria-label="Twitter"
-              >
-                <Twitter size={18} />
-              </a>
               <a
                 href="https://linkedin.com"
                 target="_blank"

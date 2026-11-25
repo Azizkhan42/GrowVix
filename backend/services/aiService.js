@@ -164,7 +164,6 @@ export async function generateContentWithAI(options) {
   const platformStrategies = {
     instagram: 'Visual-first hook, emojis, short scannable lines, 8-12 relevant hashtags. Suggest a reel or carousel visual when it fits.',
     linkedin: 'Professional thought-leadership tone, line breaks for readability, 3-5 industry hashtags, no emoji spam.',
-    twitter: 'Under 280 characters, punchy hook, no fluff, 2-3 hashtags.',
     facebook: 'Conversational and community-focused, emoji sparingly, a question that invites comments, 2-3 hashtags.',
     tiktok: 'Very short, spoken-style hook for a video caption, 1-2 lines, 3-5 trending-style hashtags.'
   };
@@ -313,7 +312,7 @@ ${contentPerformance ? `Your past performance insights:\n${JSON.stringify(conten
 
 Create entries for Monday through Sunday. For each day provide:
 - day (monday-sunday)
-- platform (instagram, linkedin, twitter, facebook)
+- platform (instagram, linkedin, facebook)
 - contentType (Reel, Carousel, Text Post, Image Post, Story, Thread, Video)
 - topic (specific topic for the post)
 - hook (attention-grabbing opening line)

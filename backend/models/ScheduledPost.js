@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const scheduledPostSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook'], required: true },
+  platform: { type: String, enum: ['instagram', 'linkedin', 'facebook'], required: true },
   content: { type: String, required: true },
   imageUrl: { type: String },
   scheduledTime: { type: Date, required: true },

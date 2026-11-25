@@ -181,7 +181,6 @@ export default function Settings() {
     { id: 'linkedin', name: 'LinkedIn', desc: 'Post articles and updates', icon: 'in', color: 'bg-[#0a66c2]', auth: true, manual: false },
     { id: 'facebook', name: 'Facebook', desc: 'Publish to Pages and Groups', icon: 'f', color: 'bg-[#1877F2]', auth: true, manual: false },
     { id: 'instagram', name: 'Instagram', desc: 'Share photos and reels', icon: 'ig', color: 'bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500', auth: true, manual: false },
-    { id: 'twitter', name: 'Twitter (X)', desc: 'Share tweets and threads', icon: 'X', color: 'bg-black border border-white/20', auth: false, manual: true },
   ];
 
   return (

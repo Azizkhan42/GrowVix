@@ -18,12 +18,11 @@ const competitorSchema = new mongoose.Schema({
   linkedinPage: { type: String, default: '' },
   tiktokProfile: { type: String, default: '' },
   youtubeChannel: { type: String, default: '' },
-  twitterHandle: { type: String, default: '' },
   logo: { type: String, default: '' },
   notes: { type: String, default: '' },
   status: { type: String, enum: ['Active', 'Paused', 'Archived'], default: 'Active' },
   platforms: [{
-    platform: { type: String, enum: ['instagram', 'twitter', 'linkedin', 'facebook', 'tiktok', 'youtube', 'website'] },
+    platform: { type: String, enum: ['instagram', 'linkedin', 'facebook', 'tiktok', 'youtube', 'website'] },
     username: { type: String },
     url: { type: String }
   }],

@@ -100,9 +100,6 @@ export default function ContentGenerator() {
       alert(`No ${platform} account connected. Go to Settings > Integrations to connect it first.`);
       return;
     }
-    if (platform === 'twitter') {
-      alert('Twitter (X) publishing uses the profile token. Connect it in Settings if not already done.');
-    }
     setPublishing(true);
     setPublishMsg('');
     try {
@@ -186,7 +183,6 @@ export default function ContentGenerator() {
                 <select value={formData.platform} onChange={(e) => setFormData({...formData, platform: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-slate-900 focus:outline-none focus:border-primary-500">
                   <option value="linkedin">LinkedIn</option>
                   <option value="instagram">Instagram</option>
-                  <option value="twitter">Twitter/X</option>
                   <option value="facebook">Facebook</option>
                 </select>
               </div>

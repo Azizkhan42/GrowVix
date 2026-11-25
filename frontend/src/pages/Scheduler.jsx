@@ -49,7 +49,6 @@ export default function Scheduler() {
 
   const platformColors = {
     linkedin: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'LinkedIn' },
-    twitter: { bg: 'bg-sky-50', text: 'text-sky-700', label: 'Twitter' },
     instagram: { bg: 'bg-pink-50', text: 'text-pink-700', label: 'Instagram' },
     facebook: { bg: 'bg-indigo-50', text: 'text-indigo-700', label: 'Facebook' },
   };
@@ -107,7 +106,6 @@ export default function Scheduler() {
                   className="w-full bg-white border border-app-border rounded-lg p-3 text-slate-900 focus:ring-2 focus:ring-violet-200 focus:border-violet-300 outline-none transition"
                 >
                   <option value="linkedin">LinkedIn</option>
-                  <option value="twitter">Twitter (X)</option>
                   <option value="instagram">Instagram</option>
                   <option value="facebook">Facebook</option>
                 </select>

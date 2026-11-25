@@ -111,7 +111,6 @@ export default function CompetitorDetail() {
                 {competitor.instagramProfile && <span className="text-xs px-3 py-1 rounded-full bg-pink-50 text-pink-600 font-medium">Instagram</span>}
                 {competitor.linkedinPage && <span className="text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 font-medium">LinkedIn</span>}
                 {competitor.facebookPage && <span className="text-xs px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 font-medium">Facebook</span>}
-                {competitor.twitterHandle && <span className="text-xs px-3 py-1 rounded-full bg-sky-50 text-sky-600 font-medium">Twitter</span>}
                 {competitor.tiktokProfile && <span className="text-xs px-3 py-1 rounded-full bg-slate-900 text-white font-medium">TikTok</span>}
                 {competitor.youtubeChannel && <span className="text-xs px-3 py-1 rounded-full bg-red-50 text-red-600 font-medium">YouTube</span>}
               </div>
@@ -186,7 +185,7 @@ export default function CompetitorDetail() {
           <Layers size={18} className="text-violet-600" /> Platform Integration Status
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {['instagram', 'website', 'facebook', 'linkedin', 'tiktok', 'youtube', 'twitter'].map(platform => {
+          {['instagram', 'website', 'facebook', 'linkedin', 'tiktok', 'youtube'].map(platform => {
             const statusObj = platformStatuses.find(p => p.platform === platform) || { status: 'Connected' };
             const isConfigured = Boolean(
               (platform === 'instagram' && competitor.instagramProfile) ||
@@ -194,8 +193,7 @@ export default function CompetitorDetail() {
               (platform === 'facebook' && competitor.facebookPage) ||
               (platform === 'linkedin' && competitor.linkedinPage) ||
               (platform === 'tiktok' && competitor.tiktokProfile) ||
-              (platform === 'youtube' && competitor.youtubeChannel) ||
-              (platform === 'twitter' && competitor.twitterHandle)
+              (platform === 'youtube' && competitor.youtubeChannel)
             );
 
             if (!isConfigured) return null;

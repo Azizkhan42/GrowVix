@@ -19,7 +19,6 @@ export const addCompetitor = async (req, res) => {
       linkedinPage,
       tiktokProfile,
       youtubeChannel,
-      twitterHandle,
       logo,
       notes,
       platforms
@@ -45,7 +44,7 @@ export const addCompetitor = async (req, res) => {
     if (!platformsList.length && instagramProfile) platformsList.push({ platform: 'instagram', username: extractUsername(instagramProfile) });
     if (!platformsList.length && website) platformsList.push({ platform: 'website', url: website });
 
-    if (!website && !instagramProfile && !facebookPage && !linkedinPage && !tiktokProfile && !youtubeChannel && !twitterHandle) {
+    if (!website && !instagramProfile && !facebookPage && !linkedinPage && !tiktokProfile && !youtubeChannel) {
       return res.status(400).json({ message: 'Please provide at least one usable analysis source (website or social profile).' });
     }
 
@@ -69,7 +68,6 @@ export const addCompetitor = async (req, res) => {
       linkedinPage: linkedinPage || '',
       tiktokProfile: tiktokProfile || '',
       youtubeChannel: youtubeChannel || '',
-      twitterHandle: twitterHandle || '',
       logo: logo || '',
       notes: notes || '',
       platforms: platformsList,
@@ -141,7 +139,7 @@ export const updateCompetitor = async (req, res) => {
     const allowedFields = [
       'name', 'industry', 'competitorType', 'location', 'website',
       'description', 'businessDescription', 'instagramProfile', 'facebookPage',
-      'linkedinPage', 'tiktokProfile', 'youtubeChannel', 'twitterHandle',
+      'linkedinPage', 'tiktokProfile', 'youtubeChannel',
       'logo', 'notes', 'status', 'platforms'
     ];
 
@@ -439,7 +437,6 @@ export const getCompetitorComparison = async (req, res) => {
           comp.instagramProfile && 'Instagram',
           comp.facebookPage && 'Facebook',
           comp.linkedinPage && 'LinkedIn',
-          comp.twitterHandle && 'Twitter',
           comp.tiktokProfile && 'TikTok',
           comp.youtubeChannel && 'YouTube'
         ].filter(Boolean)
