@@ -14,7 +14,8 @@ const contentSchema = new mongoose.Schema({
     label: String,
     caption: String,
     hashtags: [String],
-    style: String
+    style: String,
+    imagePrompt: String
   }],
   engagementScore: {
     overall: { type: Number, default: 0 },

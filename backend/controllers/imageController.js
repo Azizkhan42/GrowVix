@@ -1,12 +1,31 @@
 import Content from '../models/Content.js';
-import BusinessProfile from '../models/BusinessProfile.js';
 import {
   generateImage,
   serveImage,
   isCloudflareConfigured,
+  getConfiguredImageModel,
   getRemainingQuota,
   IMAGE_STYLES,
 } from '../services/cloudflareImageService.js';
+
+function resolveBackendBaseUrl(req) {
+  const forwardedProto = req.headers['x-forwarded-proto'];
+  const protocol =
+    (typeof forwardedProto === 'string'
+      ? forwardedProto.split(',')[0].trim()
+      : req.protocol) || 'http';
+  const host = req.get('host');
+  const requestOrigin = host ? `${protocol}://${host}` : '';
+
+  if (host && (host.startsWith('localhost') || host.startsWith('127.0.0.1'))) {
+    return requestOrigin;
+  }
+
+  return (process.env.BACKEND_URL || requestOrigin || `http://localhost:${process.env.PORT || 5000}`).replace(
+    /\/+$/,
+    ''
+  );
+}
 
 export const generateContentImage = async (req, res) => {
   try {
@@ -15,12 +34,14 @@ export const generateContentImage = async (req, res) => {
       topic,
       platform,
       style,
+      imageFormat,
+      format,
+      imagePrompt,
       caption,
       seed,
-      regenerate,
     } = req.body;
 
-    if (!topic) {
+    if (!topic || !String(topic).trim()) {
       return res.status(400).json({ message: 'Topic is required.' });
     }
 
@@ -40,26 +61,18 @@ export const generateContentImage = async (req, res) => {
       });
     }
 
-    let businessProfile = null;
-    try {
-      businessProfile = await BusinessProfile.findOne({ userId: req.user.id });
-    } catch (err) {
-      console.error('[Image] Business profile error:', err.message);
-    }
-
     const imageResult = await generateImage({
-      topic,
+      topic: String(topic).trim(),
       platform: platform || 'facebook',
       style: style || 'Product photography',
+      imageFormat: imageFormat || format || '',
+      imagePrompt: imagePrompt || '',
       caption: caption || '',
-      businessName: businessProfile?.businessName || '',
-      industry: businessProfile?.industry || '',
-      targetAudience: businessProfile?.targetAudience || '',
-      objective: 'engagement',
       seed,
+      baseUrl: resolveBackendBaseUrl(req),
     });
 
-    if (contentId && !regenerate) {
+    if (contentId) {
       try {
         const content = await Content.findOne({
           _id: contentId,
@@ -67,7 +80,7 @@ export const generateContentImage = async (req, res) => {
         });
         if (content) {
           content.imageUrl = imageResult.imageUrl;
-          content.topic = topic;
+          content.topic = String(topic).trim();
           await content.save();
         }
       } catch (err) {
@@ -77,13 +90,17 @@ export const generateContentImage = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      provider: imageResult.provider,
+      model: imageResult.model,
       imageUrl: imageResult.imageUrl,
       fileName: imageResult.fileName,
       prompt: imageResult.prompt,
       platform: imageResult.platform,
       style: imageResult.style,
+      format: imageResult.format,
       width: imageResult.width,
       height: imageResult.height,
+      mimeType: imageResult.mimeType,
       remainingQuota: getRemainingQuota(),
     });
   } catch (error) {
@@ -100,13 +117,15 @@ export const generateContentImage = async (req, res) => {
       return res.status(500).json({ message: error.message });
     }
 
-    return res.status(500).json({ message: error.message || 'Image generation failed.' });
+    return res.status(502).json({ message: error.message || 'Image generation failed.' });
   }
 };
 
 export const getImageQuota = async (req, res) => {
   try {
     return res.json({
+      provider: 'cloudflare',
+      model: getConfiguredImageModel(),
       configured: isCloudflareConfigured(),
       remaining: getRemainingQuota(),
       dailyLimit: 10000,

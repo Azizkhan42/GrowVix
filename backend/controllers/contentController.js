@@ -131,11 +131,27 @@ function normalizeHashtags(hashtags) {
       .map(tag => `#${tag}`)
   )];
 }
-function buildImagePrompt(topic, platform) {
-  const framing = platform === 'tiktok' || platform === 'instagram'
-    ? 'vertical social media composition'
-    : 'square social media composition';
-  return `${topic}. Advertising visual for a ${platform} post. ${framing}, professional commercial photography, attractive lighting, clean background, no text overlays, no watermark.`;
+function buildImagePrompt(aiImagePrompt, topic, platform) {
+  const cleanAiPrompt =
+    typeof aiImagePrompt === 'string' &&
+    aiImagePrompt.trim() &&
+    !/^null\b/i.test(aiImagePrompt.trim()) &&
+    !/pollinations/i.test(aiImagePrompt)
+      ? aiImagePrompt.trim()
+      : '';
+
+  if (cleanAiPrompt) {
+    return cleanAiPrompt;
+  }
+
+  const framing =
+    platform === 'instagram'
+      ? 'vertical social media composition'
+      : platform === 'linkedin'
+        ? 'landscape editorial composition'
+        : 'square social media composition';
+
+  return `A clear, realistic visual scene directly depicting ${topic}. ${framing}, professional commercial photography, balanced natural lighting, clean background, sharp focus, no text overlays, no watermark.`;
 }
 export const generateContent = async (req, res) => {
   try {
@@ -200,7 +216,7 @@ export const generateContent = async (req, res) => {
     generatedResult.variations = (generatedResult.variations || []).map(variation => ({
       ...variation,
       hashtags: normalizeHashtags(variation.hashtags),
-      imagePrompt: variation.imagePrompt || buildImagePrompt(null, topic, platform)
+      imagePrompt: buildImagePrompt(variation.imagePrompt, topic, platform)
     }));
 
     const selectedVariation = generatedResult.variations?.[0] || { caption: generatedResult.caption || '', hashtags: generatedResult.hashtags || [] };
@@ -231,7 +247,14 @@ export const generateContent = async (req, res) => {
 export const getContent = async (req, res) => {
   try {
     const contentList = await Content.find({ userId: req.user.id }).sort({ createdAt: -1 });
-    res.json(contentList);
+    const sanitized = contentList.map((item) => {
+      const obj = item.toObject();
+      if (obj.imageUrl && /pollinations/i.test(obj.imageUrl)) {
+        obj.imageUrl = '';
+      }
+      return obj;
+    });
+    res.json(sanitized);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

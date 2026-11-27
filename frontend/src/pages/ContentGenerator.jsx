@@ -113,7 +113,7 @@ export default function ContentGenerator() {
       setGeneratedContent(data);
       fetchHistory();
       if (formData.includeImage) {
-        await handleGenerateImage({ regenerate: false });
+        await handleGenerateImage({ regenerate: false, contentData: data });
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Error generating content');
@@ -122,38 +122,50 @@ export default function ContentGenerator() {
     }
   };
 
-  const handleGenerateImage = async ({ regenerate = true } = {}) => {
-    if (!generatedContent && !regenerate) return;
+  const handleGenerateImage = async ({ regenerate = true, contentData = null } = {}) => {
+    const targetContent = contentData || generatedContent;
+    if (!targetContent && !regenerate) return;
 
-    const topic = formData.topic || (generatedContent?.topic || '');
+    const varIndex = regenerate ? activeVariation : 0;
+    const selectedVar = targetContent?.variations?.[varIndex];
+    const topic = (formData.topic || targetContent?.topic || '').trim();
     const platform = formData.platform;
     const style = formData.imageStyle;
-    const caption = generatedContent
-      ? generatedContent.caption || ''
-      : '';
+    const imageFormat = formData.imageFormat;
+    const caption = selectedVar?.caption || targetContent?.caption || '';
+    const imagePrompt = selectedVar?.imagePrompt || '';
 
     setImageError(null);
     setImageLoading(true);
-    if (regenerate) setRegenerating(true);
+    if (regenerate) {
+      setRegenerating(true);
+      setGeneratedContent((prev) => (prev ? { ...prev, imageUrl: '' } : prev));
+    }
 
     try {
       const { data } = await api.post('/images/generate', {
-        contentId: generatedContent?._id || null,
+        contentId: targetContent?._id || null,
         topic,
         platform,
         style,
+        imageFormat,
+        imagePrompt,
         caption,
         regenerate,
-        seed: regenerate ? Math.floor(Math.random() * 1000000) : undefined,
+        seed: regenerate ? Math.floor(Math.random() * 1000000) + 1 : undefined,
       });
 
+      if (!data?.imageUrl || /pollinations/i.test(data.imageUrl)) {
+        throw new Error('Invalid image URL returned by image service.');
+      }
+
       setGeneratedContent((prev) => ({
-        ...prev,
+        ...(prev || targetContent || {}),
         imageUrl: data.imageUrl,
       }));
       fetchImageQuota();
     } catch (err) {
-      const msg = err.response?.data?.message || 'Image generation failed.';
+      const msg = err.response?.data?.message || err.message || 'Image generation failed.';
       setImageError(msg);
       if (err.response?.data?.quotaExhausted) {
         fetchImageQuota();
@@ -171,15 +183,30 @@ export default function ContentGenerator() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownloadImage = () => {
+  const handleDownloadImage = async () => {
     const imageUrl = generatedContent?.imageUrl;
     if (!imageUrl) return;
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = `growvix-image-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = `growvix-image-${Date.now()}.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = `growvix-image-${Date.now()}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const handleGenerateIdeas = async () => {
@@ -434,7 +461,7 @@ export default function ContentGenerator() {
                       disabled={imageLoading || regenerating || quotaExhausted}
                       className="text-xs px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50 transition-colors flex items-center gap-1"
                     >
-                      {regenerating ? <Loader2 size={12} className="animate-spin" /> : <RotateCcw size={12} />} Regenerate
+                      {regenerating ? <Loader2 size={12} className="animate-spin" /> : <RotateCcw size={12} />} {generatedContent.imageUrl ? 'Regenerate' : 'Generate'}
                     </button>
                   </div>
 
@@ -447,23 +474,40 @@ export default function ContentGenerator() {
                     </div>
                   )}
 
-                  {!imageError && (
-                    <div className="relative rounded-xl overflow-hidden border border-dark-border aspect-square">
+                  {!imageError && (imageLoading || regenerating || (generatedContent.imageUrl && !/pollinations/i.test(generatedContent.imageUrl))) && (
+                    <div
+                      className={`relative group rounded-xl overflow-hidden border border-dark-border ${
+                        formData.imageFormat === 'portrait'
+                          ? 'aspect-[4/5]'
+                          : formData.imageFormat === 'landscape'
+                            ? 'aspect-video'
+                            : 'aspect-square'
+                      }`}
+                    >
                       {imageLoading || regenerating ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
                           <Loader2 size={32} className="animate-spin text-slate-400" />
                         </div>
                       ) : (
-                        <img src={generatedContent.imageUrl} alt="Generated" className="w-full h-full object-cover" />
+                        <img
+                          src={generatedContent.imageUrl}
+                          alt={`Generated visual for ${formData.topic || generatedContent.topic || 'content'}`}
+                          className="w-full h-full object-cover"
+                          onError={() => {
+                            setGeneratedContent((prev) => (prev ? { ...prev, imageUrl: '' } : prev));
+                            setImageError('Generated image failed to load or decode.');
+                          }}
+                        />
                       )}
-                      <button
-                        onClick={handleDownloadImage}
-                        disabled={imageLoading || regenerating || !generatedContent.imageUrl}
-                        className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white p-1.5 rounded-lg hover:bg-black/80 transition opacity-0 group-hover:opacity-100"
-                        title="Download Image"
-                      >
-                        <Download size={16} />
-                      </button>
+                      {generatedContent.imageUrl && !imageLoading && !regenerating && (
+                        <button
+                          onClick={handleDownloadImage}
+                          className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white p-1.5 rounded-lg hover:bg-black/80 transition opacity-0 group-hover:opacity-100"
+                          title="Download Image"
+                        >
+                          <Download size={16} />
+                        </button>
+                      )}
                     </div>
                   )}
 

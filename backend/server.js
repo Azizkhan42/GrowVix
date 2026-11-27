@@ -83,8 +83,7 @@ app.options(/.*/, cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded images
-app.use('/api/images/serve', express.static(path.resolve('uploads/images')));
+// API routes (note: /api/images/serve/:fileName is handled by imageRoutes with magic-byte validation)
 
 // ==========================================
 // 3. API ROUTES

@@ -497,3 +497,38 @@ Return ONLY valid JSON:
   }
   return null;
 }
+
+
+export async function generateVisualPrompt({ topic, caption, style, format }) {
+  if (!isGeminiConfigured() || !topic) return null;
+
+  const prompt = `Convert this social media post topic and caption into a single concrete text-to-image prompt for FLUX.1 Schnell.
+
+Topic: "${topic}"
+${caption ? `Post caption excerpt: "${String(caption).slice(0, 300)}"` : ''}
+Visual style: ${style || 'Product photography'}
+Composition format: ${format || 'square'}
+
+Rules:
+- Describe ONLY concrete, physical, real-world visual subjects, environment, lighting, and camera framing that directly match the topic.
+- If the topic is abstract (e.g., "advantages and disadvantages", "campaign", "strategy"), translate it into a clear photographic scene of the actual product, place, or activity.
+- Never include unrelated objects, cartoon animals/mascot characters, or generic placeholder scenes unless explicitly asked in the topic.
+- Do NOT include any text overlays, words, letters, watermarks, or logos in the image.
+- Return ONLY the plain-text prompt in 1-2 sentences (max 90 words), no JSON, no quotes, no markdown.`;
+
+  const result = await callGemini(
+    [
+      {
+        role: 'system',
+        content:
+          'You are an expert commercial photography art director. Return only a concise, concrete visual image generation prompt.',
+      },
+      { role: 'user', content: prompt },
+    ],
+    { temperature: 0.4, max_tokens: 180, timeout: 8000 }
+  );
+
+  if (!result || typeof result !== 'string') return null;
+  const cleaned = result.replace(/^["'`]+|["'`]+$/g, '').trim();
+  return cleaned.length >= 15 ? cleaned : null;
+}
