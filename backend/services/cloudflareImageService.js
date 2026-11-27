@@ -197,7 +197,16 @@ export async function generateImage({
       timeout: 120000,
     });
 
-    const contentType = response.headers['content-type'] || 'image/png';
+    const contentType = response.headers['content-type'] || '';
+    const isImage = contentType.startsWith('image/');
+
+    if (!isImage) {
+      const bodyText = Buffer.from(response.data, 'binary').toString('utf8', 0, 500);
+      throw new Error(
+        `Cloudflare returned non-image response (Content-Type: ${contentType || 'none'}). Body: ${bodyText}`
+      );
+    }
+
     const imageBuffer = Buffer.from(response.data, 'binary');
 
     if (!imageBuffer || imageBuffer.length === 0) {
@@ -271,7 +280,24 @@ export async function serveImage(fileName, res) {
 
     const stat = fs.statSync(filePath);
 
-    res.setHeader('Content-Type', 'image/png');
+    // Validate image format by reading magic bytes
+    const header = Buffer.alloc(8);
+    const fd = fs.openSync(filePath, 'r');
+    fs.readSync(fd, header, 0, 8, null);
+    fs.closeSync(fd);
+
+    let contentType = 'image/png';
+    if (header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4e && header[3] === 0x47) {
+      contentType = 'image/png';
+    } else if (header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff) {
+      contentType = 'image/jpeg';
+    } else if (header[0] === 0x52 && header[1] === 0x49 && header[2] === 0x46 && header[3] === 0x46) {
+      contentType = 'image/webp';
+    } else {
+      return res.status(500).json({ message: 'Stored file is not a valid image.' });
+    }
+
+    res.setHeader('Content-Type', contentType);
     res.setHeader('Content-Length', stat.size);
     res.setHeader('Cache-Control', 'public, max-age=86400');
     res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
