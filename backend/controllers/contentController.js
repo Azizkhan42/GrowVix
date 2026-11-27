@@ -209,7 +209,7 @@ export const generateContent = async (req, res) => {
     let imageUrl = '';
     if (includeImage) {
       const seed = Math.floor(Math.random() * 1000000);
-      const imagePrompt = encodeURIComponent(buildImagePrompt(selectedVariation.imagePrompt, topic, platform));
+      const imagePrompt = encodeURI(buildImagePrompt(selectedVariation.imagePrompt, topic, platform));
       imageUrl = `https://image.pollinations.ai/prompt/${imagePrompt}?width=1080&height=1080&nologo=true&seed=${seed}`;
     }
 
