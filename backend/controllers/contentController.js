@@ -131,12 +131,11 @@ function normalizeHashtags(hashtags) {
       .map(tag => `#${tag}`)
   )];
 }
-function buildImagePrompt(aiImagePrompt, topic, platform) {
-  const subject = (aiImagePrompt || topic || '').trim();
+function buildImagePrompt(topic, platform) {
   const framing = platform === 'tiktok' || platform === 'instagram'
     ? 'vertical social media composition'
     : 'square social media composition';
-  return `${subject}. Advertising visual for a ${platform} post. ${framing}, professional commercial photography, attractive lighting, clean background, no text overlays, no watermark.`;
+  return `${topic}. Advertising visual for a ${platform} post. ${framing}, professional commercial photography, attractive lighting, clean background, no text overlays, no watermark.`;
 }
 export const generateContent = async (req, res) => {
   try {
@@ -206,19 +205,12 @@ export const generateContent = async (req, res) => {
 
     const selectedVariation = generatedResult.variations?.[0] || { caption: generatedResult.caption || '', hashtags: generatedResult.hashtags || [] };
 
-    let imageUrl = '';
-    if (includeImage) {
-      const seed = Math.floor(Math.random() * 1000000);
-      const imagePrompt = encodeURI(buildImagePrompt(selectedVariation.imagePrompt, topic, platform));
-      imageUrl = `https://image.pollinations.ai/prompt/${imagePrompt}?width=1080&height=1080&nologo=true&seed=${seed}`;
-    }
-
     const newContent = await Content.create({
       userId: req.user.id,
       platform,
       caption: selectedVariation.caption,
       hashtags: normalizeHashtags(selectedVariation.hashtags?.length ? selectedVariation.hashtags : generatedResult.hashtags),
-      imageUrl,
+      imageUrl: '',
       contentType: 'post',
       objective: objective || 'engagement',
       tone: tone || 'Professional',

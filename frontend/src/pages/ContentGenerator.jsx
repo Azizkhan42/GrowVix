@@ -1,7 +1,39 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, Copy, Check, Image as ImageIcon, Loader2, Calendar, Lightbulb, BarChart2, Send, Clock, X } from 'lucide-react';
+import {
+  Sparkles,
+  Copy,
+  Check,
+  Image as ImageIcon,
+  Loader2,
+  Calendar,
+  Lightbulb,
+  BarChart2,
+  Send,
+  Clock,
+  X,
+  RotateCcw,
+  Download,
+  AlertCircle,
+  AlertTriangle,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+
+const IMAGE_STYLES = [
+  { label: 'Product Photography', value: 'Product photography' },
+  { label: 'Professional Advertising', value: 'Professional advertising' },
+  { label: 'Corporate', value: 'Corporate' },
+  { label: 'Minimalist', value: 'Minimalist' },
+  { label: 'Lifestyle', value: 'Lifestyle' },
+  { label: 'Educational Illustrations', value: 'Educational illustrations' },
+  { label: 'Creative Graphics', value: 'Creative graphics' },
+];
+
+const IMAGE_FORMATS = [
+  { label: 'Square (1:1)', value: 'square' },
+  { label: 'Portrait (4:5)', value: 'portrait' },
+  { label: 'Landscape (16:9)', value: 'landscape' },
+];
 
 export default function ContentGenerator() {
   const navigate = useNavigate();
@@ -10,8 +42,10 @@ export default function ContentGenerator() {
     audience: '',
     tone: 'Professional',
     platform: 'linkedin',
-    includeImage: false,
-    objective: 'engagement'
+    includeImage: true,
+    objective: 'engagement',
+    imageStyle: 'Product photography',
+    imageFormat: 'square',
   });
 
   const [loading, setLoading] = useState(false);
@@ -29,7 +63,17 @@ export default function ContentGenerator() {
   const [scheduleForm, setScheduleForm] = useState({ scheduledTime: '' });
   const [scheduling, setScheduling] = useState(false);
 
-  useEffect(() => { fetchHistory(); fetchConnectedAccounts(); }, []);
+  // Image generation state
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError] = useState(null);
+  const [imageQuota, setImageQuota] = useState(null);
+  const [regenerating, setRegenerating] = useState(false);
+
+  useEffect(() => {
+    fetchHistory();
+    fetchConnectedAccounts();
+    fetchImageQuota();
+  }, []);
 
   const fetchHistory = async () => {
     try {
@@ -49,19 +93,74 @@ export default function ContentGenerator() {
     }
   };
 
+  const fetchImageQuota = async () => {
+    try {
+      const { data } = await api.get('/images/quota');
+      setImageQuota(data);
+    } catch (err) {
+      console.error('Failed to fetch image quota:', err);
+    }
+  };
+
   const handleGenerate = async (e) => {
     e.preventDefault();
     setLoading(true);
     setGeneratedContent(null);
+    setImageError(null);
     setActiveVariation(0);
     try {
       const { data } = await api.post('/content/generate', formData);
       setGeneratedContent(data);
       fetchHistory();
+      if (formData.includeImage) {
+        await handleGenerateImage({ regenerate: false });
+      }
     } catch (err) {
       alert(err.response?.data?.message || 'Error generating content');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateImage = async ({ regenerate = true } = {}) => {
+    if (!generatedContent && !regenerate) return;
+
+    const topic = formData.topic || (generatedContent?.topic || '');
+    const platform = formData.platform;
+    const style = formData.imageStyle;
+    const caption = generatedContent
+      ? generatedContent.caption || ''
+      : '';
+
+    setImageError(null);
+    setImageLoading(true);
+    if (regenerate) setRegenerating(true);
+
+    try {
+      const { data } = await api.post('/images/generate', {
+        contentId: generatedContent?._id || null,
+        topic,
+        platform,
+        style,
+        caption,
+        regenerate,
+        seed: regenerate ? Math.floor(Math.random() * 1000000) : undefined,
+      });
+
+      setGeneratedContent((prev) => ({
+        ...prev,
+        imageUrl: data.imageUrl,
+      }));
+      fetchImageQuota();
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Image generation failed.';
+      setImageError(msg);
+      if (err.response?.data?.quotaExhausted) {
+        fetchImageQuota();
+      }
+    } finally {
+      setImageLoading(false);
+      setRegenerating(false);
     }
   };
 
@@ -70,6 +169,17 @@ export default function ContentGenerator() {
     navigator.clipboard.writeText(fullText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadImage = () => {
+    const imageUrl = generatedContent?.imageUrl;
+    if (!imageUrl) return;
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `growvix-image-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleGenerateIdeas = async () => {
@@ -106,7 +216,7 @@ export default function ContentGenerator() {
       const { data } = await api.post('/social/post', {
         platform,
         content: buildPostText(),
-        imageUrl: generatedContent?.imageUrl || ''
+        imageUrl: generatedContent?.imageUrl || '',
       });
       setPublishMsg(data.message || 'Published successfully!');
       fetchHistory();
@@ -134,7 +244,7 @@ export default function ContentGenerator() {
         platform,
         content: buildPostText(),
         scheduledTime: new Date(scheduleForm.scheduledTime).toISOString(),
-        imageUrl: generatedContent?.imageUrl || ''
+        imageUrl: generatedContent?.imageUrl || '',
       });
       setShowScheduleModal(false);
       setPublishMsg(`Scheduled for ${new Date(data.scheduledTime).toLocaleString()}.`);
@@ -149,6 +259,7 @@ export default function ContentGenerator() {
   const variations = generatedContent?.variations || [];
   const currentVariation = variations[activeVariation] || generatedContent;
   const score = generatedContent?.engagementScore;
+  const quotaExhausted = imageQuota?.remaining === 0 && imageQuota?.configured;
 
   return (
     <div className="space-y-6">
@@ -216,11 +327,47 @@ export default function ContentGenerator() {
                 </select>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <input type="checkbox" id="includeImage" checked={formData.includeImage} onChange={(e) => setFormData({...formData, includeImage: e.target.checked})} className="w-4 h-4 rounded bg-dark-bg border-dark-border text-primary-500 focus:ring-primary-500" />
-              <label htmlFor="includeImage" className="text-sm text-slate-500 flex items-center gap-2"><ImageIcon size={14} /> Include AI-generated image</label>
+
+            <div className="bg-slate-50/50 rounded-xl p-4 border border-app-border">
+              <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                <ImageIcon size={14} className="text-amber-500" /> AI Image Generation
+              </h3>
+              <div className="flex items-center gap-3 mb-3">
+                <input type="checkbox" id="includeImage" checked={formData.includeImage} onChange={(e) => setFormData({...formData, includeImage: e.target.checked})} className="w-4 h-4 rounded bg-dark-bg border-dark-border text-primary-500 focus:ring-primary-500" />
+                <label htmlFor="includeImage" className="text-sm text-slate-500 flex items-center gap-2">Generate image with content</label>
+              </div>
+              {formData.includeImage && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-2">Image Style</label>
+                    <select value={formData.imageStyle} onChange={(e) => setFormData({...formData, imageStyle: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-slate-900 text-sm focus:outline-none focus:border-primary-500">
+                      {IMAGE_STYLES.map((s) => (
+                        <option key={s.value} value={s.value}>{s.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-2">Image Format</label>
+                    <select value={formData.imageFormat} onChange={(e) => setFormData({...formData, imageFormat: e.target.value})} className="w-full bg-dark-bg border border-dark-border rounded-lg p-2.5 text-slate-900 text-sm focus:outline-none focus:border-primary-500">
+                      {IMAGE_FORMATS.map((f) => (
+                        <option key={f.value} value={f.value}>{f.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
-            <button type="submit" disabled={loading} className="gradient-brand w-full py-3 rounded-lg text-white font-medium transition disabled:opacity-70 flex items-center justify-center gap-2 hover:opacity-95">
+
+            {imageQuota && imageQuota.configured && imageQuota.remaining === 0 && (
+              <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={14} className="text-rose-600" />
+                  <span className="text-xs text-rose-700 font-medium">Daily image allowance exhausted. Try again tomorrow.</span>
+                </div>
+              </div>
+            )}
+
+            <button type="submit" disabled={loading || quotaExhausted} className="gradient-brand w-full py-3 rounded-lg text-white font-medium transition disabled:opacity-70 flex items-center justify-center gap-2 hover:opacity-95">
               {loading ? <><Loader2 size={16} className="animate-spin" />Generating...</> : <><Sparkles size={16} />Generate Content</>}
             </button>
           </form>
@@ -276,9 +423,55 @@ export default function ContentGenerator() {
                 </div>
               )}
 
-              {generatedContent.imageUrl && (
-                <div className="rounded-xl overflow-hidden border border-dark-border">
-                  <img src={generatedContent.imageUrl} alt="Generated" className="w-full h-48 object-cover" />
+              {formData.includeImage && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                      <ImageIcon size={14} className="text-amber-500" /> Generated Image
+                    </h3>
+                    <button
+                      onClick={() => handleGenerateImage({ regenerate: true })}
+                      disabled={imageLoading || regenerating || quotaExhausted}
+                      className="text-xs px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50 transition-colors flex items-center gap-1"
+                    >
+                      {regenerating ? <Loader2 size={12} className="animate-spin" /> : <RotateCcw size={12} />} Regenerate
+                    </button>
+                  </div>
+
+                  {imageError && (
+                    <div className="bg-rose-50 border border-rose-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle size={14} className="text-rose-600" />
+                        <span className="text-xs text-rose-700">{imageError}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {!imageError && (
+                    <div className="relative rounded-xl overflow-hidden border border-dark-border aspect-square">
+                      {imageLoading || regenerating ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+                          <Loader2 size={32} className="animate-spin text-slate-400" />
+                        </div>
+                      ) : (
+                        <img src={generatedContent.imageUrl} alt="Generated" className="w-full h-full object-cover" />
+                      )}
+                      <button
+                        onClick={handleDownloadImage}
+                        disabled={imageLoading || regenerating || !generatedContent.imageUrl}
+                        className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white p-1.5 rounded-lg hover:bg-black/80 transition opacity-0 group-hover:opacity-100"
+                        title="Download Image"
+                      >
+                        <Download size={16} />
+                      </button>
+                    </div>
+                  )}
+
+                  {!generatedContent.imageUrl && !imageError && !imageLoading && !regenerating && (
+                    <div className="bg-slate-50 rounded-xl p-6 border border-dashed border-dark-border text-center">
+                      <p className="text-sm text-slate-500">Click Generate to create an AI image for this content.</p>
+                    </div>
+                  )}
                 </div>
               )}
 

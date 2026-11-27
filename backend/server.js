@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 
 import authRoutes from './routes/authRoutes.js';
 import competitorRoutes from './routes/competitorRoutes.js';
@@ -12,6 +13,7 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 import socialRoutes from './routes/socialRoutes.js';
 import businessRoutes from './routes/businessRoutes.js';
 import intelligenceRoutes from './routes/intelligenceRoutes.js';
+import imageRoutes from './routes/imageRoutes.js';
 
 import { startWorker } from './worker.js';
 
@@ -81,6 +83,9 @@ app.options(/.*/, cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded images
+app.use('/api/images/serve', express.static(path.resolve('uploads/images')));
+
 // ==========================================
 // 3. API ROUTES
 // ==========================================
@@ -93,6 +98,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/intelligence', intelligenceRoutes);
+app.use('/api/images', imageRoutes);
 
 // ==========================================
 // 4. HOME ROUTE
