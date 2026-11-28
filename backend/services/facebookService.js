@@ -47,12 +47,14 @@ export async function fetchFacebookPageData(userId) {
     }
 
     // 3. Fetch Page Insights (Impressions, Engaged users)
+    // page_posts_impressions is NOT a valid page-level metric (only valid for /post-id/insights)
+    // Using page_impressions_unique instead, which is valid at the Page level.
     let insights = {};
     try {
       const res = await axios.get(`${FB_GRAPH}/${pageId}/insights`, {
         params: {
           access_token: accessToken,
-          metric: 'page_impressions,page_engaged_users,page_posts_impressions',
+          metric: 'page_impressions,page_engaged_users,page_impressions_unique',
           period: 'day'
         }
       });
@@ -64,7 +66,13 @@ export async function fetchFacebookPageData(userId) {
         });
       }
     } catch (err) {
-      console.error('Error fetching Facebook page insights:', err.response?.data || err.message);
+      const fbErr = err.response?.data?.error;
+      if (fbErr) {
+        console.error(`Error fetching Facebook page insights (metric error): ${fbErr.message} (code ${fbErr.code}, type ${fbErr.type})`);
+      } else {
+        console.error('Error fetching Facebook page insights:', err.response?.data || err.message);
+      }
+      // Continue without insights data rather than failing entirely
     }
 
     // Format posts

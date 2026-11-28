@@ -101,6 +101,22 @@ app.use('/api/intelligence', intelligenceRoutes);
 app.use('/api/images', imageRoutes);
 
 // ==========================================
+// 3b. ROUTE REGISTRATION DIAGNOSTICS
+// ==========================================
+
+console.log('📋 Registered API route prefixes:');
+console.log('   - /api/auth');
+console.log('   - /api/competitors');
+console.log('   - /api/ai');
+console.log('   - /api/content');
+console.log('   - /api/analytics');
+console.log('   - /api/social');
+console.log('   - /api/business');
+console.log('   - /api/intelligence');
+console.log('   - /api/images (image generation, quota, styles)');
+console.log('   - /api/images/serve (static image files)');
+
+// ==========================================
 // 4. HOME ROUTE
 // ==========================================
 
@@ -109,6 +125,33 @@ app.get('/', (req, res) => {
     success: true,
     message: 'GrowVix API is running',
     status: 'Active'
+  });
+});
+
+// ==========================================
+// 4b. ROUTE DIAGNOSTIC ENDPOINT
+// ==========================================
+
+app.get('/api/routes', (req, res) => {
+  const routes = [];
+  const routerStack = app._router ? app._router.stack : (app.stack || []);
+
+  routerStack.forEach((middleware) => {
+    if (middleware.handle && middleware.handle.stack) {
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          const path = handler.route.path;
+          const methods = Object.keys(handler.route.methods).join(',').toUpperCase();
+          routes.push({ method: methods, path });
+        }
+      });
+    }
+  });
+
+  res.json({
+    success: true,
+    totalRoutes: routes.length,
+    routes: routes.sort((a, b) => a.path.localeCompare(b.path))
   });
 });
 
